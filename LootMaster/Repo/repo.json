@@ -9,11 +9,10 @@
    "RepoUrl": "https://github.com/53m1k0l0n/FFXIV-LootMaster",
    "ApplicableVersion": "any",
    "Tags": [
-     "lvlsync",
-     "level",
-     "sync",
-     "auto",
-     "aida"
+     "plugin",
+     "loot",
+     "utility",
+     "other"
    ],
    "DalamudApiLevel": 8,
    "IsHide": "False",
