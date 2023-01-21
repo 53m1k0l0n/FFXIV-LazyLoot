@@ -1,0 +1,26 @@
+{
+  "Author": "53m1k0l0n",
+  "Name": "Loot Master",
+  "Description": "Various commands to need, greed, or pass on all loot.",
+  "InternalName": "LootMAster",
+  "AssemblyVersion": "1.0.0.1",
+  "Changelog": null,
+  "RepoUrl": "https://github.com/53m1k0l0n/FFXIV-LootMaster",
+  "ApplicableVersion": "any",
+  "Tags": [
+    "lvlsync",
+    "level",
+    "sync",
+    "auto",
+    "aida"
+  ],
+  "DalamudApiLevel": 8,
+  "IsHide": "False",
+  "IsTestingExclusive": "False",
+  "LastUpdated": 0,
+  "DownloadCount": 0,
+  "IconUrl": "https://raw.githubusercontent.com/53m1k0l0n/FFXIV-LootMaster/main/LootMaster/Images/icon.png",
+  "DownloadLinkInstall": "https://github.com/53m1k0l0n/FFXIV-LootMaster/repo/lates.zip?raw=true",
+  "DownloadLinkTesting": "https://github.com/53m1k0l0n/FFXIV-LootMaster/repo/lates.zip?raw=true",
+  "DownloadLinkUpdate": "https://github.com/53m1k0l0n/FFXIV-LootMaster/repo/lates.zip?raw=true"
+}
