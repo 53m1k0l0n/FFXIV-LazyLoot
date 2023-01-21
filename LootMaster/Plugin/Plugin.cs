@@ -1,5 +1,4 @@
-﻿using Dalamud.Configuration;
-using Dalamud.Game;
+﻿using Dalamud.Game;
 using Dalamud.Game.Command;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Text.SeStringHandling;
@@ -106,13 +105,7 @@ namespace LootMaster.Plugin
             SeString seString = new(payloadList);
             chatGui.Print(seString);
 
-            List<Payload> payloadListPass = new()
-            {
-                new TextPayload("Pass all non rollable items."),
-            };
-            SeString seStringPass = new(payloadListPass);
-            ChatGui.Print(seStringPass);
-            PassCommand(null, null);
+            PassNonRollAbleItems();
         }
 
         [Command("/needonly")]
@@ -155,13 +148,7 @@ namespace LootMaster.Plugin
             SeString seString = new(payloadList);
             chatGui.Print(seString);
 
-            List<Payload> payloadListPass = new()
-            {
-                new TextPayload("Pass all non rollable items."),
-            };
-            SeString seStringPass = new(payloadListPass);
-            ChatGui.Print(seStringPass);
-            PassCommand(null, null);
+            PassNonRollAbleItems();
         }
 
         [Command("/greed")]
@@ -201,13 +188,7 @@ namespace LootMaster.Plugin
             SeString seString = new(payloadList);
             chatGui.Print(seString);
 
-            List<Payload> payloadListPass = new()
-            {
-                new TextPayload("Pass all non rollable items."),
-            };
-            SeString seStringPass = new(payloadListPass);
-            ChatGui.Print(seStringPass);
-            PassCommand(null, null);
+            PassNonRollAbleItems();
         }
 
         [Command("/pass")]
@@ -294,5 +275,16 @@ namespace LootMaster.Plugin
         }
 
         internal delegate void RollItemRaw(IntPtr lootIntPtr, RollOption option, uint lootItemIndex);
+
+        private void PassNonRollAbleItems()
+        {
+            List<Payload> payloadListPass = new()
+            {
+                new TextPayload("Pass all non rollable items."),
+            };
+            SeString seStringPass = new(payloadListPass);
+            ChatGui.Print(seStringPass);
+            PassCommand(null, null);
+        }
     }
 }
