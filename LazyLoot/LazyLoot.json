@@ -3,7 +3,7 @@
   "Name": "LazyLoot",
   "Punchline": "Dungeon Loot Made Lazy.",
   "Description": "Various commands to need, greed, or pass on all loot.",
-  "Changelog": "Pass all non rollable items after Need,Needonly and Greed.",
+  "Changelog": "Rework",
   "Tags": [
     "plugin",
     "loot",

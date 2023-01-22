@@ -12,6 +12,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace LootMaster.Plugin
 {
@@ -58,12 +60,12 @@ namespace LootMaster.Plugin
         private void RollItem(RollOption option, int index)
         {
             LootItem lootItem = LootItems[index];
-            PluginLog.Information(string.Format("{0} [{1}] {2} Id: {3:X} rollState: {4} rollOption: {5}", option, index, lootItem.ItemId, lootItem.ObjectId, lootItem.RollState, lootItem.RolledState), Array.Empty<object>());
             rollItemRaw(lootsAddr, option, (uint)index);
+            PluginLog.Information(string.Format("{0} [{1}] {2} Id: {3:X} rollState: {4} rollOption: {5}", option, index, lootItem.ItemId, lootItem.ObjectId, lootItem.RollState, lootItem.RolledState), Array.Empty<object>());
         }
 
         [Command("/need")]
-        [HelpMessage("Roll need for everything. If impossible, roll greed. Else, roll pass")]
+        [HelpMessage("Roll need for everything. If impossible roll greed.")]
         public void NeedCommand(string command, string args)
         {
             int num1 = 0;
@@ -83,11 +85,6 @@ namespace LootMaster.Plugin
                         RollItem(RollOption.Greed, index);
                         ++num2;
                     }
-                    else
-                    {
-                        RollItem(RollOption.Pass, index);
-                        ++num3;
-                    }
                 }
             }
             if (!config.EnableChatLogMessage)
@@ -104,8 +101,6 @@ namespace LootMaster.Plugin
             };
             SeString seString = new(payloadList);
             chatGui.Print(seString);
-
-            PassNonRollAbleItems();
         }
 
         [Command("/needonly")]
@@ -147,8 +142,6 @@ namespace LootMaster.Plugin
             };
             SeString seString = new(payloadList);
             chatGui.Print(seString);
-
-            PassNonRollAbleItems();
         }
 
         [Command("/greed")]
@@ -159,12 +152,12 @@ namespace LootMaster.Plugin
             int num1 = 0;
             for (int index = 0; index < LootItems.Count; ++index)
             {
-                if (!LootItems[index].Rolled)
+                if (LootItems[index].RollState == RollState.UpToGreed)
                 {
                     RollItem(RollOption.Greed, index);
                     ++num;
                 }
-                else
+                else if (!LootItems[index].Rolled)
                 {
                     RollItem(RollOption.Pass, index);
                     ++num1;
@@ -187,13 +180,11 @@ namespace LootMaster.Plugin
             };
             SeString seString = new(payloadList);
             chatGui.Print(seString);
-
-            PassNonRollAbleItems();
         }
 
         [Command("/pass")]
         [HelpMessage("Pass on things you haven't rolled for yet.")]
-        public void PassCommand(string? command, string? args)
+        public void PassCommand(string command, string args)
         {
             int num = 0;
             for (int index = 0; index < LootItems.Count; ++index)
@@ -275,16 +266,5 @@ namespace LootMaster.Plugin
         }
 
         internal delegate void RollItemRaw(IntPtr lootIntPtr, RollOption option, uint lootItemIndex);
-
-        private void PassNonRollAbleItems()
-        {
-            List<Payload> payloadListPass = new()
-            {
-                new TextPayload("Pass all non rollable items."),
-            };
-            SeString seStringPass = new(payloadListPass);
-            ChatGui.Print(seStringPass);
-            PassCommand(null, null);
-        }
     }
 }
