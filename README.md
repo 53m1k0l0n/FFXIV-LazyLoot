@@ -1,4 +1,4 @@
-# FFXIV-LootMaster
+# FFXIV-LazyLoot
 
 Plugin for Final Fantasy XIV
 
