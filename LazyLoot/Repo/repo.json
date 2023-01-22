@@ -1,0 +1,27 @@
+[
+  {
+    "Author": "53m1k0l0n",
+    "Name": "Lazy Loot",
+    "Description": "Various commands to need, greed, or pass on all loot.",
+    "InternalName": "LazyLoot",
+    "AssemblyVersion": "1.0.0.1",
+    "Changelog": null,
+    "RepoUrl": "https://github.com/53m1k0l0n/FFXIV-LazyLoot",
+    "ApplicableVersion": "any",
+    "Tags": [
+      "plugin",
+      "loot",
+      "utility",
+      "other"
+    ],
+    "DalamudApiLevel": 8,
+    "IsHide": "False",
+    "IsTestingExclusive": "False",
+    "LastUpdated": 0,
+    "DownloadCount": 0,
+    "IconUrl": "https://raw.githubusercontent.com/53m1k0l0n/FFXIV-LazyLoot/main/LazyLoot/Images/icon.png",
+    "DownloadLinkInstall": "https://github.com/53m1k0l0n/FFXIV-LazyLoot/blob/main/LazyLoot/Repo/latest.zip?raw=true",
+    "DownloadLinkTesting": "https://github.com/53m1k0l0n/FFXIV-LazyLoot/blob/main/LazyLoot/Repo/latest.zip?raw=true",
+    "DownloadLinkUpdate": "https://github.com/53m1k0l0n/FFXIV-LazyLoot/blob/main/LazyLoot/Repo/latest.zip?raw=true"
+  }
+]
