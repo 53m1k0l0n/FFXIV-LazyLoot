@@ -37,7 +37,7 @@ namespace LootMaster.Plugin
 
         public static List<LootItem> LootItems => ReadArray<LootItem>(lootsAddr + 16, 16).Where(i => i.Valid).ToList();
 
-        public string Name => "LootMaster";
+        public string Name => "LazyLoot";
 
         public Plugin()
         {

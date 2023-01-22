@@ -8,7 +8,7 @@ namespace LootMaster.Plugin
 
         public void Draw()
         {
-            if (!IsVisible || !ImGui.Begin("LootMaster Config", ref IsVisible, (ImGuiWindowFlags)96))
+            if (!IsVisible || !ImGui.Begin("Lazy Loot Config", ref IsVisible, (ImGuiWindowFlags)96))
                 return;
             ImGui.TextUnformatted("Features");
             if (ImGui.BeginTable("lootlootlootlootloot", 2))
