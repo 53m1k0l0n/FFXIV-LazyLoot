@@ -157,11 +157,6 @@ namespace LootMaster.Plugin
                     RollItem(RollOption.Greed, index);
                     ++num;
                 }
-                else if (!LootItems[index].Rolled)
-                {
-                    RollItem(RollOption.Pass, index);
-                    ++num1;
-                }
             }
             if (!config.EnableChatLogMessage)
                 return;
