@@ -12,8 +12,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace LootMaster.Plugin
 {
@@ -149,7 +147,6 @@ namespace LootMaster.Plugin
         public void GreedCommand(string command, string args)
         {
             int num = 0;
-            int num1 = 0;
             for (int index = 0; index < LootItems.Count; ++index)
             {
                 if (LootItems[index].RollState == RollState.UpToGreed)
@@ -167,11 +164,7 @@ namespace LootMaster.Plugin
                 new UIForegroundPayload(575),
                 new TextPayload(num.ToString()),
                 new UIForegroundPayload(0),
-                new TextPayload(" item" + (num > 1 ? "s" : "") + ", pass "),
-                new UIForegroundPayload(575),
-                new TextPayload(num.ToString()),
-                new UIForegroundPayload(0),
-                new TextPayload(" item" + (num1 > 1 ? "s" : "") + "."),
+                new TextPayload(" item" + (num > 1 ? "s" : "") + "."),
             };
             SeString seString = new(payloadList);
             chatGui.Print(seString);
