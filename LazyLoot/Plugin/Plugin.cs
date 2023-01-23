@@ -78,6 +78,11 @@ namespace LootMaster.Plugin
                         RollItem(RollOption.Need, index);
                         ++num1;
                     }
+                    else if (!(LootItems[index].RollState == RollState.UpToNeed) && !(LootItems[index].RollState == RollState.UpToGreed))
+                    {
+                        RollItem(RollOption.Pass, index);
+                        ++num3;
+                    }
                     else if (!LootItems[index].Rolled)
                     {
                         RollItem(RollOption.Greed, index);
@@ -93,7 +98,11 @@ namespace LootMaster.Plugin
                 new TextPayload("Need "), new UIForegroundPayload(575), new TextPayload(num1.ToString()),
                 new UIForegroundPayload(0), new TextPayload(" item" + (num1 > 1 ? "s" : "") + ", greed "),
                 new UIForegroundPayload(575), new TextPayload(num2.ToString()), new UIForegroundPayload(0),
-                new TextPayload(" item" + (num2 > 1 ? "s" : "") + ".")
+                new TextPayload(" item" + (num2 > 1 ? "s" : "") + ", pass "),
+                new UIForegroundPayload(575),
+                new TextPayload(num2.ToString()),
+                new UIForegroundPayload(0),
+                new TextPayload(" item" + (num3 > 1 ? "s" : "") + ".")
             };
             SeString seString = new(payloadList);
             chatGui.Print(seString);
@@ -145,12 +154,18 @@ namespace LootMaster.Plugin
         public void GreedCommand(string command, string args)
         {
             int num = 0;
+            int num2 = 0;
             for (int index = 0; index < LootItems.Count; ++index)
             {
-                if (!LootItems[index].Rolled)
+                if (LootItems[index].RollState == RollState.UpToGreed)
                 {
                     RollItem(RollOption.Greed, index);
                     ++num;
+                }
+                else if (!LootItems[index].Rolled)
+                {
+                    RollItem(RollOption.Pass, index);
+                    ++num2;
                 }
             }
             if (!config.EnableChatLogMessage)
@@ -162,7 +177,11 @@ namespace LootMaster.Plugin
                 new UIForegroundPayload(575),
                 new TextPayload(num.ToString()),
                 new UIForegroundPayload(0),
-                new TextPayload(" item" + (num > 1 ? "s" : "") + "."),
+                new TextPayload(" item" + (num > 1 ? "s" : "") + ", pass "),
+                new UIForegroundPayload(575),
+                new TextPayload(num2.ToString()),
+                new UIForegroundPayload(0),
+                new TextPayload(" item" + (num2 > 1 ? "s" : "") + ".")
             };
             SeString seString = new(payloadList);
             chatGui.Print(seString);

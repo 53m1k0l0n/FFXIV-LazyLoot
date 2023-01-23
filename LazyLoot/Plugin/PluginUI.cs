@@ -16,7 +16,7 @@ namespace LootMaster.Plugin
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("/need");
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted("Roll need for everything. If impossible roll greed");
+                ImGui.TextUnformatted("Roll need for everything. If impossible roll greed or pass if it's not up to need or greed");
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("/needonly");
                 ImGui.TableNextColumn();
@@ -24,7 +24,7 @@ namespace LootMaster.Plugin
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("/greed");
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted("Greed on all items.");
+                ImGui.TextUnformatted("Greed on all items or pass if it's not up to greed");
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("/pass");
                 ImGui.TableNextColumn();
