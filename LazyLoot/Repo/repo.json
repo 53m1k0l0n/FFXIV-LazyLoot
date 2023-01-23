@@ -4,7 +4,7 @@
     "Name": "Lazy Loot",
     "Description": "Various commands to need, greed, or pass on all loot.",
     "InternalName": "LazyLoot",
-    "AssemblyVersion": "1.0.0.3",
+    "AssemblyVersion": "1.0.0.4",
     "Changelog": "Rework + cleaning",
     "RepoUrl": "https://github.com/53m1k0l0n/FFXIV-LazyLoot",
     "ApplicableVersion": "any",
