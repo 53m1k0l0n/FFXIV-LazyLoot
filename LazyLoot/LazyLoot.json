@@ -3,7 +3,7 @@
   "Name": "LazyLoot",
   "Punchline": "Dungeon Loot Made Lazy.",
   "Description": "Various commands to need, greed, or pass on all loot.",
-  "Changelog": "Toast message",
+  "Changelog": "Toast message rework to Dalamud",
   "Tags": [
     "plugin",
     "loot",

@@ -7,8 +7,6 @@ using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.IoC;
 using Dalamud.Logging;
 using Dalamud.Plugin;
-using ECommons;
-using ECommons.DalamudServices;
 using LootMaster.Attributes;
 using LootMaster.Config;
 using System;
@@ -38,13 +36,15 @@ namespace LootMaster.Plugin
         [PluginService]
         public static ChatGui ChatGui { get; set; }
 
+        [PluginService]
+        public static ToastGui ToastGui { get; private set; }
+
         public static List<LootItem> LootItems => ReadArray<LootItem>(lootsAddr + 16, 16).Where(i => i.Valid).ToList();
 
         public string Name => "LazyLoot";
 
         public Plugin(DalamudPluginInterface pluginInterface)
         {
-            ECommonsMain.Init(pluginInterface, this);
             lootsAddr = SigScanner.GetStaticAddressFromSig("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 89 44 24 60", 0);
             rollItemRaw = Marshal.GetDelegateForFunctionPointer<RollItemRaw>(SigScanner.ScanText("41 83 F8 ?? 0F 83 ?? ?? ?? ?? 48 89 5C 24 08"));
             config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
@@ -113,7 +113,7 @@ namespace LootMaster.Plugin
             };
             SeString seString = new(payloadList);
             chatGui.Print(seString);
-            Svc.Toasts.ShowQuest(seString);
+            ToastGui.ShowQuest(seString);
         }
 
         [Command("/needonly")]
@@ -155,7 +155,7 @@ namespace LootMaster.Plugin
             };
             SeString seString = new(payloadList);
             chatGui.Print(seString);
-            Svc.Toasts.ShowQuest(seString);
+            ToastGui.ShowQuest(seString);
         }
 
         [Command("/greed")]
@@ -194,7 +194,7 @@ namespace LootMaster.Plugin
             };
             SeString seString = new(payloadList);
             chatGui.Print(seString);
-            Svc.Toasts.ShowQuest(seString);
+            ToastGui.ShowQuest(seString);
         }
 
         [Command("/pass")]
@@ -223,7 +223,7 @@ namespace LootMaster.Plugin
             };
             SeString seString = new(payloadList);
             chatGui.Print(seString);
-            Svc.Toasts.ShowQuest(seString);
+            ToastGui.ShowQuest(seString);
         }
 
         [Command("/passall")]
@@ -252,7 +252,7 @@ namespace LootMaster.Plugin
             };
             SeString seString = new(payloadList);
             chatGui.Print(seString);
-            Svc.Toasts.ShowQuest(seString);
+            ToastGui.ShowQuest(seString);
         }
 
         public static T[] ReadArray<T>(IntPtr unmanagedArray, int length) where T : struct
