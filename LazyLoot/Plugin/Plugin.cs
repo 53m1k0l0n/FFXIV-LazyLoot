@@ -94,10 +94,6 @@ namespace LootMaster.Plugin
                     }
                 }
             }
-            if (!config.EnableChatLogMessage)
-                return;
-
-           
 
             ChatGui chatGui = ChatGui;
             List<Payload> payloadList = new()
@@ -112,8 +108,16 @@ namespace LootMaster.Plugin
                 new TextPayload(" item" + (num3 > 1 ? "s" : "") + ".")
             };
             SeString seString = new(payloadList);
-            chatGui.Print(seString);
-            ToastGui.ShowQuest(seString);
+
+            if (config.EnableChatLogMessage)
+            {
+                chatGui.Print(seString);
+            }
+
+            if (config.EnableToastMessage)
+            {
+                ToastGui.ShowNormal(seString);
+            }
         }
 
         [Command("/needonly")]
@@ -138,8 +142,7 @@ namespace LootMaster.Plugin
                     }
                 }
             }
-            if (!config.EnableChatLogMessage)
-                return;
+
             ChatGui chatGui = ChatGui;
             List<Payload> payloadList = new()
             {
@@ -154,8 +157,16 @@ namespace LootMaster.Plugin
                 new TextPayload(" item" + (num2 > 1 ? "s" : "") + ".")
             };
             SeString seString = new(payloadList);
-            chatGui.Print(seString);
-            ToastGui.ShowQuest(seString);
+
+            if(config.EnableChatLogMessage)
+            {
+                chatGui.Print(seString);
+            }
+
+            if (config.EnableToastMessage)
+            {
+                ToastGui.ShowNormal(seString);
+            }
         }
 
         [Command("/greed")]
@@ -171,14 +182,8 @@ namespace LootMaster.Plugin
                     RollItem(RollOption.Greed, index);
                     ++num;
                 }
-                else if (!LootItems[index].Rolled)
-                {
-                    RollItem(RollOption.Pass, index);
-                    ++num2;
-                }
             }
-            if (!config.EnableChatLogMessage)
-                return;
+
             ChatGui chatGui = ChatGui;
             List<Payload> payloadList = new()
             {
@@ -193,8 +198,16 @@ namespace LootMaster.Plugin
                 new TextPayload(" item" + (num2 > 1 ? "s" : "") + ".")
             };
             SeString seString = new(payloadList);
-            chatGui.Print(seString);
-            ToastGui.ShowQuest(seString);
+
+            if (config.EnableChatLogMessage)
+            {
+                chatGui.Print(seString);
+            }
+
+            if (config.EnableToastMessage)
+            {
+                ToastGui.ShowNormal(seString);
+            }
         }
 
         [Command("/pass")]
@@ -210,8 +223,6 @@ namespace LootMaster.Plugin
                     ++num;
                 }
             }
-            if (!config.EnableChatLogMessage)
-                return;
             ChatGui chatGui = ChatGui;
             List<Payload> payloadList = new()
             {
@@ -222,8 +233,16 @@ namespace LootMaster.Plugin
                 new TextPayload(" item" + (num > 1 ? "s" : "") + ".")
             };
             SeString seString = new(payloadList);
-            chatGui.Print(seString);
-            ToastGui.ShowQuest(seString);
+
+            if (config.EnableChatLogMessage)
+            {
+                chatGui.Print(seString);
+            }
+
+            if (config.EnableToastMessage)
+            {
+                ToastGui.ShowNormal(seString);
+            }
         }
 
         [Command("/passall")]
@@ -239,8 +258,7 @@ namespace LootMaster.Plugin
                     ++num;
                 }
             }
-            if (!config.EnableChatLogMessage)
-                return;
+
             ChatGui chatGui = ChatGui;
             List<Payload> payloadList = new()
             {
@@ -251,8 +269,16 @@ namespace LootMaster.Plugin
                 new TextPayload(" item" + (num > 1 ? "s" : "") + ".")
             };
             SeString seString = new(payloadList);
-            chatGui.Print(seString);
-            ToastGui.ShowQuest(seString);
+
+            if (config.EnableChatLogMessage) 
+            { 
+                chatGui.Print(seString);
+            }
+
+            if (config.EnableToastMessage)
+            {
+                ToastGui.ShowNormal(seString);
+            }
         }
 
         public static T[] ReadArray<T>(IntPtr unmanagedArray, int length) where T : struct

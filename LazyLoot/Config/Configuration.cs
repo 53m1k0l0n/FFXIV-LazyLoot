@@ -7,6 +7,7 @@ namespace LootMaster.Config
     public class Configuration : IPluginConfiguration
     {
         public bool EnableChatLogMessage = true;
+        public bool EnableToastMessage = true;
         [JsonIgnore]
         private DalamudPluginInterface pluginInterface;
 

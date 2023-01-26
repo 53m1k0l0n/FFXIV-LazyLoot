@@ -24,7 +24,7 @@ namespace LootMaster.Plugin
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("/greed");
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted("Greed on all items or pass if it's not up to greed");
+                ImGui.TextUnformatted("Roll greed on all items.");
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("/pass");
                 ImGui.TableNextColumn();
@@ -38,6 +38,9 @@ namespace LootMaster.Plugin
             ImGui.Spacing();
             ImGui.Separator();
             ImGui.Checkbox("Display roll information in chat.", ref Plugin.config.EnableChatLogMessage);
+            ImGui.Spacing();
+            ImGui.Separator();
+            ImGui.Checkbox("Display roll information as toast.", ref Plugin.config.EnableToastMessage);
             ImGui.End();
         }
     }
