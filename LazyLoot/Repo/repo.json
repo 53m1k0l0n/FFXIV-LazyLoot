@@ -2,10 +2,10 @@
   {
     "Author": "53m1k0l0n",
     "Name": "Lazy Loot",
-    "Description": "Various commands to need, greed, or pass on all loot. Chat and Toast output.",
+    "Description": "Various commands to need, greed, or pass on all loot. Chat and Toast output and delay for rolling.",
     "InternalName": "LazyLoot",
-    "AssemblyVersion": "3.0.0.2",
-    "Changelog": "Command added to open the config. And a bit cleaner.",
+    "AssemblyVersion": "4.0.0.0",
+    "Changelog": "Added configable delay for rolling. Default 2 seconds.",
     "RepoUrl": "https://github.com/53m1k0l0n/FFXIV-LazyLoot",
     "ApplicableVersion": "any",
     "Tags": [

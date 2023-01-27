@@ -1,9 +1,9 @@
 {
   "Author": "53m1k0l0n",
   "Name": "LazyLoot",
-  "Punchline": "Dungeon Loot Made Lazy.",
-  "Description": "Various commands to need, greed, or pass on all loot. Chat and Toast output.",
-  "Changelog": "Command added to open the config. And a bit cleaner.",
+  "Punchline": "Dungeon Loot but Lazy.",
+  "Description": "Various commands to need, greed, or pass on all loot. Chat and Toast output and delay for rolling.",
+  "Changelog": "Added configable delay for rolling. Default 2 seconds.",
   "Tags": [
     "plugin",
     "loot",

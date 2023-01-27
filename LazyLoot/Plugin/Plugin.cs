@@ -13,6 +13,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 
 namespace LazyLoot.Plugin
 {
@@ -71,30 +72,32 @@ namespace LazyLoot.Plugin
         [Command("/need")]
         [HelpMessage("Roll need for everything. If impossible roll greed.")]
         [DoNotShowInHelp]
-        public void NeedCommand(string command, string args)
+        public async void NeedCommand(string command, string args)
         {
             int num1 = 0;
             int num2 = 0;
             int num3 = 0;
+
             for (int index = 0; index < LootItems.Count; ++index)
             {
                 if (!LootItems[index].Rolled)
                 {
                     if (LootItems[index].RollState == RollState.UpToNeed)
                     {
-                        RollItem(RollOption.Need, index);
+                        await RollItemAsync(RollOption.Need, index);
                         ++num1;
                     }
                     else if (!(LootItems[index].RollState == RollState.UpToNeed) && !(LootItems[index].RollState == RollState.UpToGreed))
                     {
-                        RollItem(RollOption.Pass, index);
+                       await RollItemAsync(RollOption.Pass, index);
                         ++num3;
                     }
                     else if (!LootItems[index].Rolled)
                     {
-                        RollItem(RollOption.Greed, index);
+                        await RollItemAsync(RollOption.Greed, index);
                         ++num2;
                     }
+
                 }
             }
 
@@ -136,7 +139,7 @@ namespace LazyLoot.Plugin
         [Command("/needonly")]
         [HelpMessage("Roll need for everything. If impossible roll pass")]
         [DoNotShowInHelp]
-        public void NeedOnlyCommand(string command, string args)
+        public async void NeedOnlyCommand(string command, string args)
         {
             int num1 = 0;
             int num2 = 0;
@@ -146,12 +149,12 @@ namespace LazyLoot.Plugin
                 {
                     if (LootItems[index].RollState == RollState.UpToNeed)
                     {
-                        RollItem(RollOption.Need, index);
+                        await RollItemAsync(RollOption.Need, index);
                         ++num1;
                     }
                     else
                     {
-                        RollItem(RollOption.Pass, index);
+                        await RollItemAsync(RollOption.Pass, index);
                         ++num2;
                     }
                 }
@@ -196,15 +199,14 @@ namespace LazyLoot.Plugin
         [Command("/greed")]
         [HelpMessage("Greed on all items.")]
         [DoNotShowInHelp]
-        public void GreedCommand(string command, string args)
+        public async void GreedCommand(string command, string args)
         {
             int num = 0;
-            int num2 = 0;
             for (int index = 0; index < LootItems.Count; ++index)
             {
                 if (LootItems[index].RollState == RollState.UpToGreed)
                 {
-                    RollItem(RollOption.Greed, index);
+                    await RollItemAsync(RollOption.Greed, index);
                     ++num;
                 }
             }
@@ -216,11 +218,7 @@ namespace LazyLoot.Plugin
                 new UIForegroundPayload(575),
                 new TextPayload(num.ToString()),
                 new UIForegroundPayload(0),
-                new TextPayload(" item" + (num > 1 ? "s" : "") + ", pass "),
-                new UIForegroundPayload(575),
-                new TextPayload(num2.ToString()),
-                new UIForegroundPayload(0),
-                new TextPayload(" item" + (num2 > 1 ? "s" : "") + ".")
+                new TextPayload(" item" + (num > 1 ? "s" : "") + ".")
             };
             SeString seString = new(payloadList);
 
@@ -248,14 +246,14 @@ namespace LazyLoot.Plugin
         [Command("/pass")]
         [HelpMessage("Pass on things you haven't rolled for yet.")]
         [DoNotShowInHelp]
-        public void PassCommand(string command, string args)
+        public async void PassCommand(string command, string args)
         {
             int num = 0;
             for (int index = 0; index < LootItems.Count; ++index)
             {
                 if (!LootItems[index].Rolled)
                 {
-                    RollItem(RollOption.Pass, index);
+                    await RollItemAsync(RollOption.Pass, index);
                     ++num;
                 }
             }
@@ -294,14 +292,14 @@ namespace LazyLoot.Plugin
         [Command("/passall")]
         [HelpMessage("Passes on all, even if you rolled on them previously.")]
         [DoNotShowInHelp]
-        public void PassAllCommand(string command, string args)
+        public async void PassAllCommand(string command, string args)
         {
             int num = 0;
             for (int index = 0; index < LootItems.Count; ++index)
             {
                 if (LootItems[index].RolledState != RollOption.Pass)
                 {
-                    RollItem(RollOption.Pass, index);
+                    await RollItemAsync(RollOption.Pass, index);
                     ++num;
                 }
             }
@@ -367,11 +365,16 @@ namespace LazyLoot.Plugin
 
         internal delegate void RollItemRaw(IntPtr lootIntPtr, RollOption option, uint lootItemIndex);
 
-        private static void RollItem(RollOption option, int index)
+        private static async Task RollItemAsync(RollOption option, int index)
         {
+            if (Plugin.config.EnableRollDelay)
+            {
+                await Task.Delay(new TimeSpan(0, 0, Plugin.config.RollDelayInSeconds));
+            }
+
             LootItem lootItem = LootItems[index];
             rollItemRaw(lootsAddr, option, (uint)index);
-            PluginLog.Information(string.Format("{0} [{1}] {2} Id: {3:X} rollState: {4} rollOption: {5}", option, index, lootItem.ItemId, lootItem.ObjectId, lootItem.RollState, lootItem.RolledState), Array.Empty<object>());
+            PluginLog.Information(string.Format($"{option} [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState}"));
         }
     }
 }

@@ -38,6 +38,10 @@ namespace LazyLoot.Plugin
             }
             ImGui.Spacing();
             ImGui.Separator();
+            ImGui.Checkbox("Rolling delay between items.", ref Plugin.config.EnableRollDelay);
+            ImGui.InputInt("Delay in seconds.", ref Plugin.config.RollDelayInSeconds);
+            ImGui.Spacing();
+            ImGui.Separator();
             ImGui.Checkbox("Display roll information in chat.", ref Plugin.config.EnableChatLogMessage);
             ImGui.Spacing();
             ImGui.Separator();
