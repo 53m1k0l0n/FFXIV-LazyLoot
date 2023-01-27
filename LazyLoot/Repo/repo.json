@@ -2,10 +2,10 @@
   {
     "Author": "53m1k0l0n",
     "Name": "Lazy Loot",
-    "Description": "Various commands to need, greed, or pass on all loot.",
+    "Description": "Various commands to need, greed, or pass on all loot. Chat and Toast output.",
     "InternalName": "LazyLoot",
-    "AssemblyVersion": "3.0.0.1",
-    "Changelog": "Stupid misstake.",
+    "AssemblyVersion": "3.0.0.2",
+    "Changelog": "Command added to open the config. And a bit cleaner.",
     "RepoUrl": "https://github.com/53m1k0l0n/FFXIV-LazyLoot",
     "ApplicableVersion": "any",
     "Tags": [

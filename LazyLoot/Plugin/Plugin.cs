@@ -60,15 +60,17 @@ namespace LazyLoot.Plugin
             commandManager = new PluginCommandManager<Plugin>(this, PluginInterface);
         }
 
-        private static void RollItem(RollOption option, int index)
+
+        [Command("/lazy")]
+        [HelpMessage("Open Lazy Loot config.")]
+        public void OpenConfig(string command, string arguments)
         {
-            LootItem lootItem = LootItems[index];
-            rollItemRaw(lootsAddr, option, (uint)index);
-            PluginLog.Information(string.Format("{0} [{1}] {2} Id: {3:X} rollState: {4} rollOption: {5}", option, index, lootItem.ItemId, lootItem.ObjectId, lootItem.RollState, lootItem.RolledState), Array.Empty<object>());
+            ui.IsVisible = !ui.IsVisible;
         }
 
         [Command("/need")]
         [HelpMessage("Roll need for everything. If impossible roll greed.")]
+        [DoNotShowInHelp]
         public void NeedCommand(string command, string args)
         {
             int num1 = 0;
@@ -133,6 +135,7 @@ namespace LazyLoot.Plugin
 
         [Command("/needonly")]
         [HelpMessage("Roll need for everything. If impossible roll pass")]
+        [DoNotShowInHelp]
         public void NeedOnlyCommand(string command, string args)
         {
             int num1 = 0;
@@ -192,6 +195,7 @@ namespace LazyLoot.Plugin
 
         [Command("/greed")]
         [HelpMessage("Greed on all items.")]
+        [DoNotShowInHelp]
         public void GreedCommand(string command, string args)
         {
             int num = 0;
@@ -243,6 +247,7 @@ namespace LazyLoot.Plugin
 
         [Command("/pass")]
         [HelpMessage("Pass on things you haven't rolled for yet.")]
+        [DoNotShowInHelp]
         public void PassCommand(string command, string args)
         {
             int num = 0;
@@ -288,6 +293,7 @@ namespace LazyLoot.Plugin
 
         [Command("/passall")]
         [HelpMessage("Passes on all, even if you rolled on them previously.")]
+        [DoNotShowInHelp]
         public void PassAllCommand(string command, string args)
         {
             int num = 0;
@@ -360,5 +366,12 @@ namespace LazyLoot.Plugin
         }
 
         internal delegate void RollItemRaw(IntPtr lootIntPtr, RollOption option, uint lootItemIndex);
+
+        private static void RollItem(RollOption option, int index)
+        {
+            LootItem lootItem = LootItems[index];
+            rollItemRaw(lootsAddr, option, (uint)index);
+            PluginLog.Information(string.Format("{0} [{1}] {2} Id: {3:X} rollState: {4} rollOption: {5}", option, index, lootItem.ItemId, lootItem.ObjectId, lootItem.RollState, lootItem.RolledState), Array.Empty<object>());
+        }
     }
 }

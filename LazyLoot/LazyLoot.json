@@ -2,8 +2,8 @@
   "Author": "53m1k0l0n",
   "Name": "LazyLoot",
   "Punchline": "Dungeon Loot Made Lazy.",
-  "Description": "Various commands to need, greed, or pass on all loot.",
-  "Changelog": "Stupid misstake.",
+  "Description": "Various commands to need, greed, or pass on all loot. Chat and Toast output.",
+  "Changelog": "Command added to open the config. And a bit cleaner.",
   "Tags": [
     "plugin",
     "loot",
