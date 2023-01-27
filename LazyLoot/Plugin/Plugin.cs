@@ -69,7 +69,7 @@ namespace LazyLoot.Plugin
 
         [Command("/need")]
         [HelpMessage("Roll need for everything. If impossible roll greed.")]
-        public static void NeedCommand()
+        public void NeedCommand(string command, string args)
         {
             int num1 = 0;
             int num2 = 0;
@@ -133,7 +133,7 @@ namespace LazyLoot.Plugin
 
         [Command("/needonly")]
         [HelpMessage("Roll need for everything. If impossible roll pass")]
-        public static void NeedOnlyCommand()
+        public void NeedOnlyCommand(string command, string args)
         {
             int num1 = 0;
             int num2 = 0;
@@ -192,7 +192,7 @@ namespace LazyLoot.Plugin
 
         [Command("/greed")]
         [HelpMessage("Greed on all items.")]
-        public static void GreedCommand()
+        public void GreedCommand(string command, string args)
         {
             int num = 0;
             int num2 = 0;
@@ -243,7 +243,7 @@ namespace LazyLoot.Plugin
 
         [Command("/pass")]
         [HelpMessage("Pass on things you haven't rolled for yet.")]
-        public static void PassCommand()
+        public void PassCommand(string command, string args)
         {
             int num = 0;
             for (int index = 0; index < LootItems.Count; ++index)
@@ -288,7 +288,7 @@ namespace LazyLoot.Plugin
 
         [Command("/passall")]
         [HelpMessage("Passes on all, even if you rolled on them previously.")]
-        public static void PassAllCommand()
+        public void PassAllCommand(string command, string args)
         {
             int num = 0;
             for (int index = 0; index < LootItems.Count; ++index)
