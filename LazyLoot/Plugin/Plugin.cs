@@ -7,14 +7,14 @@ using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.IoC;
 using Dalamud.Logging;
 using Dalamud.Plugin;
-using LootMaster.Attributes;
-using LootMaster.Config;
+using LazyLoot.Attributes;
+using LazyLoot.Config;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 
-namespace LootMaster.Plugin
+namespace LazyLoot.Plugin
 {
     public class Plugin : IDalamudPlugin, IDisposable
     {
@@ -45,6 +45,7 @@ namespace LootMaster.Plugin
 
         public Plugin(DalamudPluginInterface pluginInterface)
         {
+            PluginInterface = pluginInterface;
             lootsAddr = SigScanner.GetStaticAddressFromSig("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 89 44 24 60", 0);
             rollItemRaw = Marshal.GetDelegateForFunctionPointer<RollItemRaw>(SigScanner.ScanText("41 83 F8 ?? 0F 83 ?? ?? ?? ?? 48 89 5C 24 08"));
             config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
@@ -59,7 +60,7 @@ namespace LootMaster.Plugin
             commandManager = new PluginCommandManager<Plugin>(this, PluginInterface);
         }
 
-        private void RollItem(RollOption option, int index)
+        private static void RollItem(RollOption option, int index)
         {
             LootItem lootItem = LootItems[index];
             rollItemRaw(lootsAddr, option, (uint)index);
@@ -68,7 +69,7 @@ namespace LootMaster.Plugin
 
         [Command("/need")]
         [HelpMessage("Roll need for everything. If impossible roll greed.")]
-        public void NeedCommand(string command, string args)
+        public static void NeedCommand()
         {
             int num1 = 0;
             int num2 = 0;
@@ -114,15 +115,25 @@ namespace LootMaster.Plugin
                 chatGui.Print(seString);
             }
 
-            if (config.EnableToastMessage)
+            if (config.EnableToastMessage && config.EnableNormalToast)
             {
                 ToastGui.ShowNormal(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableQuestToast)
+            {
+                ToastGui.ShowQuest(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableErrorToast)
+            {
+                ToastGui.ShowError(seString);
             }
         }
 
         [Command("/needonly")]
         [HelpMessage("Roll need for everything. If impossible roll pass")]
-        public void NeedOnlyCommand(string command, string args)
+        public static void NeedOnlyCommand()
         {
             int num1 = 0;
             int num2 = 0;
@@ -163,15 +174,25 @@ namespace LootMaster.Plugin
                 chatGui.Print(seString);
             }
 
-            if (config.EnableToastMessage)
+            if (config.EnableToastMessage && config.EnableNormalToast)
             {
                 ToastGui.ShowNormal(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableQuestToast)
+            {
+                ToastGui.ShowQuest(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableErrorToast)
+            {
+                ToastGui.ShowError(seString);
             }
         }
 
         [Command("/greed")]
         [HelpMessage("Greed on all items.")]
-        public void GreedCommand(string command, string args)
+        public static void GreedCommand()
         {
             int num = 0;
             int num2 = 0;
@@ -204,15 +225,25 @@ namespace LootMaster.Plugin
                 chatGui.Print(seString);
             }
 
-            if (config.EnableToastMessage)
+            if (config.EnableToastMessage && config.EnableNormalToast)
             {
                 ToastGui.ShowNormal(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableQuestToast)
+            {
+                ToastGui.ShowQuest(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableErrorToast)
+            {
+                ToastGui.ShowError(seString);
             }
         }
 
         [Command("/pass")]
         [HelpMessage("Pass on things you haven't rolled for yet.")]
-        public void PassCommand(string command, string args)
+        public static void PassCommand()
         {
             int num = 0;
             for (int index = 0; index < LootItems.Count; ++index)
@@ -239,15 +270,25 @@ namespace LootMaster.Plugin
                 chatGui.Print(seString);
             }
 
-            if (config.EnableToastMessage)
+            if (config.EnableToastMessage && config.EnableNormalToast)
             {
                 ToastGui.ShowNormal(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableQuestToast)
+            {
+                ToastGui.ShowQuest(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableErrorToast)
+            {
+                ToastGui.ShowError(seString);
             }
         }
 
         [Command("/passall")]
         [HelpMessage("Passes on all, even if you rolled on them previously.")]
-        public void PassAllCommand(string command, string args)
+        public static void PassAllCommand()
         {
             int num = 0;
             for (int index = 0; index < LootItems.Count; ++index)
@@ -275,9 +316,19 @@ namespace LootMaster.Plugin
                 chatGui.Print(seString);
             }
 
-            if (config.EnableToastMessage)
+            if (config.EnableToastMessage && config.EnableNormalToast)
             {
                 ToastGui.ShowNormal(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableQuestToast)
+            {
+                ToastGui.ShowQuest(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableErrorToast)
+            {
+                ToastGui.ShowError(seString);
             }
         }
 

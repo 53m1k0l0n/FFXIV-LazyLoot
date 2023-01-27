@@ -6,7 +6,7 @@
 
 using System;
 
-namespace LootMaster.Attributes
+namespace LazyLoot.Attributes
 {
     [AttributeUsage(AttributeTargets.Method)]
     public class AliasesAttribute : Attribute

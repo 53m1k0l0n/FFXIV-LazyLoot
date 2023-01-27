@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace LootMaster.Config
+namespace LazyLoot.Config
 {
     [StructLayout(LayoutKind.Explicit, Size = 64)]
     public struct LootItem

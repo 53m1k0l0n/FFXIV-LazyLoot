@@ -1,12 +1,12 @@
 ﻿using Dalamud.Game.Command;
 using Dalamud.Plugin;
-using LootMaster.Attributes;
+using LazyLoot.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace LootMaster.Plugin
+namespace LazyLoot.Plugin
 {
     public class PluginCommandManager<THost> : IDisposable
     {
@@ -16,7 +16,13 @@ namespace LootMaster.Plugin
         public PluginCommandManager(THost host, DalamudPluginInterface pluginInterface)
         {
             this.host = host;
-            pluginCommands = host.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic).Where(method => method.GetCustomAttribute<CommandAttribute>() != null).SelectMany(new Func<MethodInfo, IEnumerable<(string, CommandInfo)>>(GetCommandInfoTuple)).ToArray();
+
+            pluginCommands = host.GetType()
+                .GetMethods(BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic)
+                .Where(method => method.GetCustomAttribute<CommandAttribute>() != null)
+                .SelectMany(new Func<MethodInfo, IEnumerable<(string, CommandInfo)>>(GetCommandInfoTuple))
+                .ToArray();
+
             Array.Reverse((Array)pluginCommands);
             AddCommandHandlers();
         }
@@ -62,6 +68,10 @@ namespace LootMaster.Plugin
             return commandInfoTuple;
         }
 
-        public void Dispose() => RemoveCommandHandlers();
+        public void Dispose()
+        {
+            RemoveCommandHandlers();
+            GC.SuppressFinalize(this);
+        }
     }
 }

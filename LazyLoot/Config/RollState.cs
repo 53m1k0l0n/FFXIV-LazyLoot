@@ -1,4 +1,4 @@
-﻿namespace LootMaster.Config
+﻿namespace LazyLoot.Config
 {
     public enum RollState : uint
     {

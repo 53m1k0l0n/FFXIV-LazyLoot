@@ -1,10 +1,11 @@
 ﻿using ImGuiNET;
 
-namespace LootMaster.Plugin
+namespace LazyLoot.Plugin
 {
     public class PluginUI
     {
         public bool IsVisible;
+        private string? preview;
 
         public void Draw()
         {
@@ -41,6 +42,49 @@ namespace LootMaster.Plugin
             ImGui.Spacing();
             ImGui.Separator();
             ImGui.Checkbox("Display roll information as toast.", ref Plugin.config.EnableToastMessage);
+            ImGui.Spacing();
+            ImGui.Separator();
+
+            if (Plugin.config.EnableNormalToast)
+            {
+                preview = "Normal";
+            }
+            else if (Plugin.config.EnableErrorToast)
+            {
+                preview = "Error";
+            }
+            else
+            {
+                preview = "Quest";
+            }
+
+            if (ImGui.BeginCombo("Toast", preview))
+            {
+                if (ImGui.Selectable("Quest", ref Plugin.config.EnableQuestToast))
+                {
+                    preview = "Quest";
+                    Plugin.config.EnableNormalToast = false;
+                    Plugin.config.EnableErrorToast = false;
+                }
+
+                if (ImGui.Selectable("Normal", ref Plugin.config.EnableNormalToast))
+                {
+                    preview = "Normal";
+                    Plugin.config.EnableQuestToast = false;
+                    Plugin.config.EnableErrorToast = false;
+                }
+
+                if (ImGui.Selectable("Error", ref Plugin.config.EnableErrorToast))
+                {
+                    preview = "Error";
+                    Plugin.config.EnableQuestToast = false;
+                    Plugin.config.EnableNormalToast = false;
+                }
+
+                Plugin.config.Save();
+
+                ImGui.EndCombo();
+            }
             ImGui.End();
         }
     }

@@ -3,7 +3,7 @@
   "Name": "LazyLoot",
   "Punchline": "Dungeon Loot Made Lazy.",
   "Description": "Various commands to need, greed, or pass on all loot.",
-  "Changelog": "Config for enableling toast and rework to normal toas instead of quest toast",
+  "Changelog": "Config for toast Normal, Quest and Error.",
   "Tags": [
     "plugin",
     "loot",

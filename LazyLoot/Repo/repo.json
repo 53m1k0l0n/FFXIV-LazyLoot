@@ -4,8 +4,8 @@
     "Name": "Lazy Loot",
     "Description": "Various commands to need, greed, or pass on all loot.",
     "InternalName": "LazyLoot",
-    "AssemblyVersion": "2.0.0.2",
-    "Changelog": "Config for enableling toas and rework to normal toas instead of quest toast",
+    "AssemblyVersion": "3.0.0.0",
+    "Changelog": "Config for toast Normal, Quest and Error.",
     "RepoUrl": "https://github.com/53m1k0l0n/FFXIV-LazyLoot",
     "ApplicableVersion": "any",
     "Tags": [

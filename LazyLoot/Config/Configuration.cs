@@ -2,12 +2,15 @@
 using Dalamud.Plugin;
 using Newtonsoft.Json;
 
-namespace LootMaster.Config
+namespace LazyLoot.Config
 {
     public class Configuration : IPluginConfiguration
     {
         public bool EnableChatLogMessage = true;
         public bool EnableToastMessage = true;
+        public bool EnableNormalToast = false;
+        public bool EnableErrorToast = false;
+        public bool EnableQuestToast = true;
         [JsonIgnore]
         private DalamudPluginInterface pluginInterface;
 
