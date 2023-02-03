@@ -204,7 +204,7 @@ namespace LazyLoot.Plugin
             int num = 0;
             for (int index = 0; index < LootItems.Count; ++index)
             {
-                if (LootItems[index].RollState == RollState.UpToGreed)
+                if (LootItems[index].RollState <= RollState.UpToGreed)
                 {
                     await RollItemAsync(RollOption.Greed, index);
                     ++num;
@@ -369,7 +369,7 @@ namespace LazyLoot.Plugin
         {
             if (Plugin.config.EnableRollDelay)
             {
-                await Task.Delay(new TimeSpan(0, 0, Plugin.config.RollDelayInSeconds));
+                await Task.Delay(new TimeSpan(0, 0, 0, Plugin.config.RollDelayInSeconds, new Random().Next(-250, 251)));
             }
 
             LootItem lootItem = LootItems[index];
