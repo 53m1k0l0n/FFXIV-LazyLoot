@@ -2,7 +2,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <Authors>53m1k0l0n</Authors>
-    <Version>4.0.0.0</Version>
+    <Version>4.0.0.1</Version>
     <Description>LazyLoot plugin.</Description>
 	<CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
   </PropertyGroup>
