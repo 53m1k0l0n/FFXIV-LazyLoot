@@ -24,6 +24,12 @@ namespace LazyLoot.Plugin
         internal static RollItemRaw rollItemRaw;
         private readonly PluginCommandManager<Plugin> commandManager;
         private readonly PluginUI ui;
+        private List<LootItem> items = new();
+        private uint lastItem;
+
+
+        [PluginService]
+        public static ChatGui ChatGui { get; set; }
 
         [PluginService]
         public static CommandManager CommandManager { get; set; }
@@ -35,12 +41,7 @@ namespace LazyLoot.Plugin
         public static SigScanner SigScanner { get; set; }
 
         [PluginService]
-        public static ChatGui ChatGui { get; set; }
-
-        [PluginService]
         public static ToastGui ToastGui { get; private set; }
-
-        public static List<LootItem> LootItems => ReadArray<LootItem>(lootsAddr + 16, 16).Where(i => i.Valid).ToList();
 
         public string Name => "LazyLoot";
 
@@ -74,42 +75,68 @@ namespace LazyLoot.Plugin
         [DoNotShowInHelp]
         public async void NeedCommand(string command, string args)
         {
+            items.AddRange(GetItems());
+
+            if (items.Count == 0)
+            {
+                ToastGui.ShowError(">>No loot<<");
+                return;
+            }
+
             int num1 = 0;
             int num2 = 0;
             int num3 = 0;
 
-            for (int index = 0; index < LootItems.Count; ++index)
+            for (int index = items.Count - 1; index >= 0; index--)
             {
-                if (!LootItems[index].Rolled)
+                if (!items[index].Rolled)
                 {
-                    if (LootItems[index].RollState == RollState.UpToNeed)
+                    lastItem = items[index].ItemId;
+                    if (items[index].RollState == RollState.UpToNeed)
                     {
                         await RollItemAsync(RollOption.Need, index);
-                        ++num1;
+                        var item = GetItem(index);
+                        if (!item.Rolled)
+                        {
+                            await RollItemAsync(RollOption.Pass, index);
+                            ++num3;
+                        }
+                        else
+                        {
+                            ++num1;
+                        }
                     }
-                    else if (!(LootItems[index].RollState == RollState.UpToNeed) && !(LootItems[index].RollState == RollState.UpToGreed))
-                    {
-                       await RollItemAsync(RollOption.Pass, index);
-                        ++num3;
-                    }
-                    else if (!LootItems[index].Rolled)
+                    else if (items[index].RollState == RollState.UpToGreed)
                     {
                         await RollItemAsync(RollOption.Greed, index);
-                        ++num2;
+                        var item = GetItem(index);
+                        if (!item.Rolled)
+                        {
+                            await RollItemAsync(RollOption.Pass, index);
+                            ++num3;
+                        }
+                        else
+                        {
+                            ++num2;
+                        }
                     }
-
                 }
             }
 
             ChatGui chatGui = ChatGui;
             List<Payload> payloadList = new()
             {
-                new TextPayload("Need "), new UIForegroundPayload(575), new TextPayload(num1.ToString()),
-                new UIForegroundPayload(0), new TextPayload(" item" + (num1 > 1 ? "s" : "") + ", greed "),
-                new UIForegroundPayload(575), new TextPayload(num2.ToString()), new UIForegroundPayload(0),
-                new TextPayload(" item" + (num2 > 1 ? "s" : "") + ", pass "),
+                new TextPayload("Need "),
+                new UIForegroundPayload(575),
+                new TextPayload(num1.ToString()),
+                new UIForegroundPayload(0),
+                new TextPayload(" item" + (num1 > 1 ? "s" : "") + ", greed "),
                 new UIForegroundPayload(575),
                 new TextPayload(num2.ToString()),
+                new UIForegroundPayload(0),
+                new TextPayload(" item" + (num2 > 1 ? "s" : "") + ", pass "),
+                new UIForegroundPayload(575),
+                new TextPayload(num3.ToString()),
                 new UIForegroundPayload(0),
                 new TextPayload(" item" + (num3 > 1 ? "s" : "") + ".")
             };
@@ -134,6 +161,8 @@ namespace LazyLoot.Plugin
             {
                 ToastGui.ShowError(seString);
             }
+
+            items.Clear();
         }
 
         [Command("/needonly")]
@@ -141,16 +170,34 @@ namespace LazyLoot.Plugin
         [DoNotShowInHelp]
         public async void NeedOnlyCommand(string command, string args)
         {
+            items.AddRange(GetItems());
+
+            if (items.Count == 0)
+            {
+                ToastGui.ShowError(">>No loot<<");
+                return;
+            }
+
             int num1 = 0;
             int num2 = 0;
-            for (int index = 0; index < LootItems.Count; ++index)
+            for (int index = items.Count - 1; index >= 0; index--)
             {
-                if (!LootItems[index].Rolled)
+                if (!items[index].Rolled)
                 {
-                    if (LootItems[index].RollState == RollState.UpToNeed)
+                    lastItem = items[index].ItemId;
+                    if (items[index].RollState == RollState.UpToNeed)
                     {
                         await RollItemAsync(RollOption.Need, index);
-                        ++num1;
+                        var item = GetItem(index);
+                        if (!item.Rolled)
+                        {
+                            await RollItemAsync(RollOption.Pass, index);
+                            ++num2;
+                        }
+                        else
+                        {
+                            ++num1;
+                        }
                     }
                     else
                     {
@@ -194,6 +241,8 @@ namespace LazyLoot.Plugin
             {
                 ToastGui.ShowError(seString);
             }
+
+            items.Clear();
         }
 
         [Command("/greed")]
@@ -201,13 +250,33 @@ namespace LazyLoot.Plugin
         [DoNotShowInHelp]
         public async void GreedCommand(string command, string args)
         {
-            int num = 0;
-            for (int index = 0; index < LootItems.Count; ++index)
+            
+            items.AddRange(GetItems());
+
+            if (items.Count == 0)
             {
-                if (LootItems[index].RollState <= RollState.UpToGreed)
+                ToastGui.ShowError(">>No loot<<");
+                return;
+            }
+
+            int num = 0;
+            int num2 = 0;
+            for (int index = items.Count - 1; index >= 0; index--)
+            {
+                if (items[index].RollState <= RollState.UpToGreed)
                 {
+                    lastItem = items[index].ItemId;
                     await RollItemAsync(RollOption.Greed, index);
-                    ++num;
+                    var item = GetItem(index);
+                    if (!item.Rolled)
+                    {
+                        await RollItemAsync(RollOption.Pass, index);
+                        ++num2;
+                    }
+                    else
+                    {
+                        ++num;
+                    }
                 }
             }
 
@@ -218,7 +287,11 @@ namespace LazyLoot.Plugin
                 new UIForegroundPayload(575),
                 new TextPayload(num.ToString()),
                 new UIForegroundPayload(0),
-                new TextPayload(" item" + (num > 1 ? "s" : "") + ".")
+                new TextPayload(" item" + (num > 1 ? "s" : "") + ", pass "),
+                new UIForegroundPayload(575),
+                new TextPayload(num2.ToString()),
+                new UIForegroundPayload(0),
+                new TextPayload(" item" + (num2 > 1 ? "s" : "") + ".")
             };
             SeString seString = new(payloadList);
 
@@ -241,6 +314,8 @@ namespace LazyLoot.Plugin
             {
                 ToastGui.ShowError(seString);
             }
+
+            items.Clear();
         }
 
         [Command("/pass")]
@@ -248,11 +323,20 @@ namespace LazyLoot.Plugin
         [DoNotShowInHelp]
         public async void PassCommand(string command, string args)
         {
-            int num = 0;
-            for (int index = 0; index < LootItems.Count; ++index)
+            items.AddRange(GetItems());
+
+            if (items.Count == 0)
             {
-                if (!LootItems[index].Rolled)
+                ToastGui.ShowError(">>No loot<<");
+                return;
+            }
+
+            int num = 0;
+            for (int index = items.Count - 1; index >= 0; index--)
+            {
+                if (!items[index].Rolled)
                 {
+                    lastItem = items[index].ItemId;
                     await RollItemAsync(RollOption.Pass, index);
                     ++num;
                 }
@@ -287,6 +371,8 @@ namespace LazyLoot.Plugin
             {
                 ToastGui.ShowError(seString);
             }
+
+            items.Clear();
         }
 
         [Command("/passall")]
@@ -294,11 +380,20 @@ namespace LazyLoot.Plugin
         [DoNotShowInHelp]
         public async void PassAllCommand(string command, string args)
         {
-            int num = 0;
-            for (int index = 0; index < LootItems.Count; ++index)
+            items.AddRange(GetItems());
+
+            if (items.Count == 0)
             {
-                if (LootItems[index].RolledState != RollOption.Pass)
+                ToastGui.ShowError(">>No loot<<");
+                return;
+            }
+
+            int num = 0;
+            for (int index = items.Count - 1; index >= 0; index--)
+            {
+                if (items[index].RolledState != RollOption.Pass)
                 {
+                    lastItem = items[index].ItemId;
                     await RollItemAsync(RollOption.Pass, index);
                     ++num;
                 }
@@ -334,9 +429,11 @@ namespace LazyLoot.Plugin
             {
                 ToastGui.ShowError(seString);
             }
+
+            items.Clear();
         }
 
-        public static T[] ReadArray<T>(IntPtr unmanagedArray, int length) where T : struct
+        public T[] ReadArray<T>(IntPtr unmanagedArray, int length) where T : struct
         {
             int num = Marshal.SizeOf(typeof(T));
             T[] objArray = new T[length];
@@ -354,7 +451,7 @@ namespace LazyLoot.Plugin
                 return;
             commandManager.Dispose();
             PluginInterface.SavePluginConfig(config);
-            PluginInterface.UiBuilder.Draw -= new Action(ui.Draw);
+            PluginInterface.UiBuilder.Draw -= new System.Action(ui.Draw);
         }
 
         public void Dispose()
@@ -365,16 +462,41 @@ namespace LazyLoot.Plugin
 
         internal delegate void RollItemRaw(IntPtr lootIntPtr, RollOption option, uint lootItemIndex);
 
-        private static async Task RollItemAsync(RollOption option, int index)
+        private async Task RollItemAsync(RollOption option, int index)
         {
-            if (Plugin.config.EnableRollDelay)
+            rollItemRaw(lootsAddr, option, (uint)index);
+
+            if (config.EnableRollDelay)
             {
-                await Task.Delay(new TimeSpan(0, 0, 0, Plugin.config.RollDelayInSeconds, new Random().Next(-250, 251)));
+                await Task.Delay(new TimeSpan(0, 0, 0, config.RollDelayInSeconds, new Random().Next(-250, 251)));
+            }
+            else
+            {
+                await Task.Delay(new TimeSpan(0, 0, 0, 1, new Random().Next(-250, 251)));
             }
 
-            LootItem lootItem = LootItems[index];
-            rollItemRaw(lootsAddr, option, (uint)index);
-            PluginLog.Information(string.Format($"{option} [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState}"));
+            LootItem lootItem = GetItem(index);
+            PluginLog.Information(string.Format($"{option} [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState} rolled: {lootItem.Rolled}"));
         }
+
+        private LootItem GetItem(int index)
+        {
+            try
+            {
+                return ReadArray<LootItem>(lootsAddr + 16, 16).Where(i => i.Valid).ToList()[index];
+            }
+            catch
+            {
+
+                return new LootItem() {ItemId = lastItem, RolledState = RollOption.NotAvailable };
+            }
+           
+        }
+
+        private List<LootItem> GetItems()
+        {
+            return ReadArray<LootItem>(lootsAddr + 16, 16).Where(i => i.Valid).ToList();
+        }
+
     }
 }

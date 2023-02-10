@@ -12,7 +12,7 @@ namespace LazyLoot.Config
         public bool EnableErrorToast = false;
         public bool EnableQuestToast = true;
         public bool EnableRollDelay = true;
-        public int RollDelayInSeconds = 2;
+        public int RollDelayInSeconds = 1;
 
         [JsonIgnore]
         private DalamudPluginInterface pluginInterface;

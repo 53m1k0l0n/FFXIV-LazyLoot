@@ -17,7 +17,7 @@ namespace LazyLoot.Plugin
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("/need");
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted("Roll need for everything. If impossible roll greed or pass if it's not up to need or greed");
+                ImGui.TextUnformatted("Roll need for everything. If impossible roll greed or pass if need or greed isn't successful.");
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("/needonly");
                 ImGui.TableNextColumn();
@@ -25,7 +25,7 @@ namespace LazyLoot.Plugin
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("/greed");
                 ImGui.TableNextColumn();
-                ImGui.TextUnformatted("Roll greed on all items.");
+                ImGui.TextUnformatted("Roll greed on all items or pass if greed isn't successful.");
                 ImGui.TableNextColumn();
                 ImGui.TextUnformatted("/pass");
                 ImGui.TableNextColumn();

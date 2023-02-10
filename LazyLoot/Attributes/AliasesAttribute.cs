@@ -1,10 +1,4 @@
-﻿
-// Type: DalamudPluginProjectTemplate.Attributes.AliasesAttribute
-
-
-
-
-using System;
+﻿using System;
 
 namespace LazyLoot.Attributes
 {
