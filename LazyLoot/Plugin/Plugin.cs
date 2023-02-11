@@ -123,44 +123,7 @@ namespace LazyLoot.Plugin
                 }
             }
 
-            ChatGui chatGui = ChatGui;
-            List<Payload> payloadList = new()
-            {
-                new TextPayload("Need "),
-                new UIForegroundPayload(575),
-                new TextPayload(num1.ToString()),
-                new UIForegroundPayload(0),
-                new TextPayload(" item" + (num1 > 1 ? "s" : "") + ", greed "),
-                new UIForegroundPayload(575),
-                new TextPayload(num2.ToString()),
-                new UIForegroundPayload(0),
-                new TextPayload(" item" + (num2 > 1 ? "s" : "") + ", pass "),
-                new UIForegroundPayload(575),
-                new TextPayload(num3.ToString()),
-                new UIForegroundPayload(0),
-                new TextPayload(" item" + (num3 > 1 ? "s" : "") + ".")
-            };
-            SeString seString = new(payloadList);
-
-            if (config.EnableChatLogMessage)
-            {
-                chatGui.Print(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableNormalToast)
-            {
-                ToastGui.ShowNormal(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableQuestToast)
-            {
-                ToastGui.ShowQuest(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableErrorToast)
-            {
-                ToastGui.ShowError(seString);
-            }
+            ChatOutput(num1, num2, num3);
 
             items.Clear();
         }
@@ -179,7 +142,7 @@ namespace LazyLoot.Plugin
             }
 
             int num1 = 0;
-            int num2 = 0;
+            int num3 = 0;
             for (int index = items.Count - 1; index >= 0; index--)
             {
                 if (!items[index].Rolled)
@@ -192,7 +155,7 @@ namespace LazyLoot.Plugin
                         if (!item.Rolled)
                         {
                             await RollItemAsync(RollOption.Pass, index);
-                            ++num2;
+                            ++num3;
                         }
                         else
                         {
@@ -202,45 +165,12 @@ namespace LazyLoot.Plugin
                     else
                     {
                         await RollItemAsync(RollOption.Pass, index);
-                        ++num2;
+                        ++num3;
                     }
                 }
             }
 
-            ChatGui chatGui = ChatGui;
-            List<Payload> payloadList = new()
-            {
-                new TextPayload("Need Only"),
-                new UIForegroundPayload(575),
-                new TextPayload(num1.ToString()),
-                new UIForegroundPayload(0),
-                new TextPayload(" item" + (num1 > 1 ? "s" : "") + ", pass "),
-                new UIForegroundPayload(575),
-                new TextPayload(num2.ToString()),
-                new UIForegroundPayload(0),
-                new TextPayload(" item" + (num2 > 1 ? "s" : "") + ".")
-            };
-            SeString seString = new(payloadList);
-
-            if(config.EnableChatLogMessage)
-            {
-                chatGui.Print(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableNormalToast)
-            {
-                ToastGui.ShowNormal(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableQuestToast)
-            {
-                ToastGui.ShowQuest(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableErrorToast)
-            {
-                ToastGui.ShowError(seString);
-            }
+            ChatOutput(num1, 0, num3);
 
             items.Clear();
         }
@@ -259,8 +189,8 @@ namespace LazyLoot.Plugin
                 return;
             }
 
-            int num = 0;
             int num2 = 0;
+            int num3 = 0;
             for (int index = items.Count - 1; index >= 0; index--)
             {
                 if (items[index].RollState <= RollState.UpToGreed)
@@ -271,49 +201,16 @@ namespace LazyLoot.Plugin
                     if (!item.Rolled)
                     {
                         await RollItemAsync(RollOption.Pass, index);
-                        ++num2;
+                        ++num3;
                     }
                     else
                     {
-                        ++num;
+                        ++num2;
                     }
                 }
             }
 
-            ChatGui chatGui = ChatGui;
-            List<Payload> payloadList = new()
-            {
-                new TextPayload("Greed "),
-                new UIForegroundPayload(575),
-                new TextPayload(num.ToString()),
-                new UIForegroundPayload(0),
-                new TextPayload(" item" + (num > 1 ? "s" : "") + ", pass "),
-                new UIForegroundPayload(575),
-                new TextPayload(num2.ToString()),
-                new UIForegroundPayload(0),
-                new TextPayload(" item" + (num2 > 1 ? "s" : "") + ".")
-            };
-            SeString seString = new(payloadList);
-
-            if (config.EnableChatLogMessage)
-            {
-                chatGui.Print(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableNormalToast)
-            {
-                ToastGui.ShowNormal(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableQuestToast)
-            {
-                ToastGui.ShowQuest(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableErrorToast)
-            {
-                ToastGui.ShowError(seString);
-            }
+            ChatOutput(0, num2, num3);
 
             items.Clear();
         }
@@ -331,46 +228,18 @@ namespace LazyLoot.Plugin
                 return;
             }
 
-            int num = 0;
+            int num3 = 0;
             for (int index = items.Count - 1; index >= 0; index--)
             {
                 if (!items[index].Rolled)
                 {
                     lastItem = items[index].ItemId;
                     await RollItemAsync(RollOption.Pass, index);
-                    ++num;
+                    ++num3;
                 }
             }
-            ChatGui chatGui = ChatGui;
-            List<Payload> payloadList = new()
-            {
-                new TextPayload("Pass "),
-                new UIForegroundPayload(575),
-                new TextPayload(num.ToString()),
-                new UIForegroundPayload(0),
-                new TextPayload(" item" + (num > 1 ? "s" : "") + ".")
-            };
-            SeString seString = new(payloadList);
 
-            if (config.EnableChatLogMessage)
-            {
-                chatGui.Print(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableNormalToast)
-            {
-                ToastGui.ShowNormal(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableQuestToast)
-            {
-                ToastGui.ShowQuest(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableErrorToast)
-            {
-                ToastGui.ShowError(seString);
-            }
+            ChatOutput(0, 0, num3);
 
             items.Clear();
         }
@@ -388,47 +257,18 @@ namespace LazyLoot.Plugin
                 return;
             }
 
-            int num = 0;
+            int num3 = 0;
             for (int index = items.Count - 1; index >= 0; index--)
             {
                 if (items[index].RolledState != RollOption.Pass)
                 {
                     lastItem = items[index].ItemId;
                     await RollItemAsync(RollOption.Pass, index);
-                    ++num;
+                    ++num3;
                 }
             }
 
-            ChatGui chatGui = ChatGui;
-            List<Payload> payloadList = new()
-            {
-                new TextPayload("Pass all "),
-                new UIForegroundPayload(575),
-                new TextPayload(num.ToString()),
-                new UIForegroundPayload(0),
-                new TextPayload(" item" + (num > 1 ? "s" : "") + ".")
-            };
-            SeString seString = new(payloadList);
-
-            if (config.EnableChatLogMessage) 
-            { 
-                chatGui.Print(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableNormalToast)
-            {
-                ToastGui.ShowNormal(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableQuestToast)
-            {
-                ToastGui.ShowQuest(seString);
-            }
-
-            if (config.EnableToastMessage && config.EnableErrorToast)
-            {
-                ToastGui.ShowError(seString);
-            }
+            ChatOutput(0, 0, num3);
 
             items.Clear();
         }
@@ -498,5 +338,52 @@ namespace LazyLoot.Plugin
             return ReadArray<LootItem>(lootsAddr + 16, 16).Where(i => i.Valid).ToList();
         }
 
+        private static void ChatOutput(int num1, int num2, int num3)
+        {
+            ChatGui chatGui = ChatGui;
+            List<Payload> payloadList = new()
+            {
+                new TextPayload("Need "),
+                new UIForegroundPayload(575),
+                new TextPayload(num1.ToString()),
+                new UIForegroundPayload(0),
+                new TextPayload(" item" + (num1 > 1 ? "s" : "") + ", greed "),
+                new UIForegroundPayload(575),
+                new TextPayload(num2.ToString()),
+                new UIForegroundPayload(0),
+                new TextPayload(" item" + (num2 > 1 ? "s" : "") + ", pass "),
+                new UIForegroundPayload(575),
+                new TextPayload(num3.ToString()),
+                new UIForegroundPayload(0),
+                new TextPayload(" item" + (num3 > 1 ? "s" : "") + ".")
+            };
+
+            SeString seString = new(payloadList);
+
+            if (config.EnableChatLogMessage)
+            {
+                chatGui.Print(seString);
+            }
+
+            ToastOutput(seString);
+        }
+
+        private static void ToastOutput(SeString seString)
+        {
+            if (config.EnableToastMessage && config.EnableNormalToast)
+            {
+                ToastGui.ShowNormal(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableQuestToast)
+            {
+                ToastGui.ShowQuest(seString);
+            }
+
+            if (config.EnableToastMessage && config.EnableErrorToast)
+            {
+                ToastGui.ShowError(seString);
+            }
+        }
     }
 }
