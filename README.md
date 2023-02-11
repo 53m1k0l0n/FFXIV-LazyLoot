@@ -1,4 +1,4 @@
-# If you still on 4.0.0.1 and tried to update and deinstalled 4.0.0.1 and it say still 4.0.0.1 try removing the repo->save->add repo UNTIL you get 5.0.2 or in best case 5.0.3. I don't fucking know what the problem is. Sorry.
+# Please remove this https://raw.githubusercontent.com/53m1k0l0n/FFXIV-LazyLoot/main/LazyLoot/Repo/repo.json AND deinstall the plugin and add https://raw.githubusercontent.com/53m1k0l0n/FF14_Plugins/main/repo.json
 
 
 # FFXIV-LazyLoot
@@ -8,4 +8,6 @@
 Plugin for Final Fantasy XIV
 
 Various commands to need, greed, or pass on all loot. Chat and Toast output and delay for rolling.
+
+https://raw.githubusercontent.com/53m1k0l0n/FF14_Plugins/main/repo.json
 
