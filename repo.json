@@ -4,8 +4,8 @@
     "Name": "Lazy Loot",
     "Description": "Various commands to need, greed, or pass on all loot. Chat and Toast output and delay for rolling.",
     "InternalName": "LazyLoot",
-    "AssemblyVersion": "5.0.4",
-    "Changelog": "Version bump?",
+    "AssemblyVersion": "5.0.7",
+    "Changelog": "Config save executes properly now.",
     "RepoUrl": "https://github.com/53m1k0l0n/FFXIV-LazyLoot",
     "ApplicableVersion": "any",
     "Tags": [
@@ -19,9 +19,8 @@
     "IsTestingExclusive": "False",
     "LastUpdated": 0,
     "DownloadCount": 0,
-    "IconUrl": "https://raw.githubusercontent.com/53m1k0l0n/FFXIV-LazyLoot/main/LazyLoot/Repo/LazyLoot/images/icon.png",
-    "DownloadLinkInstall": "https://github.com/53m1k0l0n/FFXIV-LazyLoot/blob/main/LazyLoot/Repo/LazyLoot/latest.zip?raw=true",
-    "DownloadLinkTesting": "https://github.com/53m1k0l0n/FFXIV-LazyLoot/blob/main/LazyLoot/Repo/LazyLoot/latest.zip?raw=true",
-    "DownloadLinkUpdate": "https://github.com/53m1k0l0n/FFXIV-LazyLoot/blob/main/LazyLoot/Repo/LazyLoot/latest.zip?raw=true"
+    "IconUrl": "https://raw.githubusercontent.com/53m1k0l0n/FFXIV-LazyLoot/main/LazyLoot/Images/icon.png",
+    "DownloadLinkInstall": "https://github.com/53m1k0l0n/FFXIV-LazyLoot/releases/download/v5.0.7/latest.zip",
+    "DownloadLinkUpdate": "https://github.com/53m1k0l0n/FFXIV-LazyLoot/releases/download/v5.0.7/latest.zip"
   }
 ]
