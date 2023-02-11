@@ -85,10 +85,10 @@ namespace LazyLoot.Plugin
                     Plugin.config.EnableNormalToast = false;
                 }
 
-                Plugin.config.Save();
-
                 ImGui.EndCombo();
             }
+
+            Plugin.config.Save();
             ImGui.End();
         }
     }
