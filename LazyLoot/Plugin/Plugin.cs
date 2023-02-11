@@ -71,7 +71,7 @@ namespace LazyLoot.Plugin
         }
 
         [Command("/need")]
-        [HelpMessage("Roll need for everything. If impossible roll greed.")]
+        [HelpMessage("Roll need for everything. If impossible roll greed or pass if need or greed isn't successful.")]
         [DoNotShowInHelp]
         public async void NeedCommand(string command, string args)
         {
@@ -166,7 +166,7 @@ namespace LazyLoot.Plugin
         }
 
         [Command("/needonly")]
-        [HelpMessage("Roll need for everything. If impossible roll pass")]
+        [HelpMessage("Roll need for everything. If impossible, roll pass.")]
         [DoNotShowInHelp]
         public async void NeedOnlyCommand(string command, string args)
         {
@@ -246,7 +246,7 @@ namespace LazyLoot.Plugin
         }
 
         [Command("/greed")]
-        [HelpMessage("Greed on all items.")]
+        [HelpMessage("Roll greed on all items or pass if greed isn't successful.")]
         [DoNotShowInHelp]
         public async void GreedCommand(string command, string args)
         {
