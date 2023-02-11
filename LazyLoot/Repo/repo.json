@@ -19,9 +19,9 @@
     "IsTestingExclusive": "False",
     "LastUpdated": 0,
     "DownloadCount": 0,
-    "IconUrl": "https://raw.githubusercontent.com/53m1k0l0n/repo/main/LazyLoot/images/icon.png",
-    "DownloadLinkInstall": "https://github.com/53m1k0l0n/repo/blob/main/LazyLoot/latest.zip?raw=true",
-    "DownloadLinkTesting": "https://github.com/53m1k0l0n/repo/blob/main/LazyLoot/latest.zip?raw=true",
-    "DownloadLinkUpdate": "https://github.com/53m1k0l0n/repo/blob/main/LazyLoot/latest.zip?raw=true"
+    "IconUrl": "https://raw.githubusercontent.com/53m1k0l0n/FFXIV-LazyLoot/main/LazyLoot/Repo/LazyLoot/images/icon.png",
+    "DownloadLinkInstall": "https://github.com/53m1k0l0n/FFXIV-LazyLoot/blob/main/LazyLoot/Repo/LazyLoot/latest.zip?raw=true",
+    "DownloadLinkTesting": "https://github.com/53m1k0l0n/FFXIV-LazyLoot/blob/main/LazyLoot/Repo/LazyLoot/latest.zip?raw=true",
+    "DownloadLinkUpdate": "https://github.com/53m1k0l0n/FFXIV-LazyLoot/blob/main/LazyLoot/Repo/LazyLoot/latest.zip?raw=true"
   }
 ]
