@@ -2,7 +2,7 @@
   "Author": "53m1k0l0n",
   "Name": "LazyLoot",
   "InternalName": "LazyLoot",
-  "AssemblyVersion": "5.0.2.0",
+  "AssemblyVersion": "5.0.3.0",
   "Description": "Various commands to need, greed, or pass on all loot. Chat and Toast output and delay for rolling.",
   "ApplicableVersion": "any",
   "RepoUrl": "https://github.com/53m1k0l0n/FFXIV-LazyLoot",
@@ -18,6 +18,6 @@
   "LoadPriority": 0,
   "IconUrl": "https://raw.githubusercontent.com/53m1k0l0n/FFXIV-LazyLoot/main/LazyLoot/Images/icon.png",
   "Punchline": "Dungeon Loot but Lazy.",
-  "Changelog": "Rework rolling, there is now a default delay of 1 second, unless you have Delay configured. This is for the Rolled detection, to give the game some time to execute.",
+  "Changelog": "Little changes.",
   "AcceptsFeedback": true
 }

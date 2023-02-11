@@ -24,7 +24,7 @@ namespace LazyLoot.Plugin
         internal static RollItemRaw rollItemRaw;
         private readonly PluginCommandManager<Plugin> commandManager;
         private readonly PluginUI ui;
-        private List<LootItem> items = new();
+        private readonly List<LootItem> items = new();
         private uint lastItem;
 
 
@@ -77,9 +77,9 @@ namespace LazyLoot.Plugin
         {
             items.AddRange(GetItems());
 
-            if (items.Count == 0)
+            if (items.All(x => x.Rolled))
             {
-                ToastGui.ShowError(">>No loot<<");
+                ToastGui.ShowError(">>No new loot<<");
                 return;
             }
 
@@ -172,9 +172,9 @@ namespace LazyLoot.Plugin
         {
             items.AddRange(GetItems());
 
-            if (items.Count == 0)
+            if (items.All(x => x.Rolled))
             {
-                ToastGui.ShowError(">>No loot<<");
+                ToastGui.ShowError(">>No new loot<<");
                 return;
             }
 
@@ -253,9 +253,9 @@ namespace LazyLoot.Plugin
             
             items.AddRange(GetItems());
 
-            if (items.Count == 0)
+            if (items.All(x => x.Rolled))
             {
-                ToastGui.ShowError(">>No loot<<");
+                ToastGui.ShowError(">>No new loot<<");
                 return;
             }
 
@@ -325,9 +325,9 @@ namespace LazyLoot.Plugin
         {
             items.AddRange(GetItems());
 
-            if (items.Count == 0)
+            if (items.All(x => x.Rolled))
             {
-                ToastGui.ShowError(">>No loot<<");
+                ToastGui.ShowError(">>No new loot<<");
                 return;
             }
 
@@ -382,9 +382,9 @@ namespace LazyLoot.Plugin
         {
             items.AddRange(GetItems());
 
-            if (items.Count == 0)
+            if (items.All(x => x.Rolled))
             {
-                ToastGui.ShowError(">>No loot<<");
+                ToastGui.ShowError(">>No new loot<<");
                 return;
             }
 
