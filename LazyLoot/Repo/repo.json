@@ -1,0 +1,27 @@
+[
+  {
+    "Author": "53m1k0l0n",
+    "Name": "Lazy Loot",
+    "Description": "Various commands to need, greed, or pass on all loot. Chat and Toast output and delay for rolling.",
+    "InternalName": "LazyLoot",
+    "AssemblyVersion": "5.0.2",
+    "Changelog": "Rework rolling, there is now a default delay of 1 second, unless you have Delay configured. This is for the Rolled detection, to give the game some time to execute.",
+    "RepoUrl": "https://github.com/53m1k0l0n/FFXIV-LazyLoot",
+    "ApplicableVersion": "any",
+    "Tags": [
+      "plugin",
+      "loot",
+      "utility",
+      "other"
+    ],
+    "DalamudApiLevel": 8,
+    "IsHide": "False",
+    "IsTestingExclusive": "False",
+    "LastUpdated": 0,
+    "DownloadCount": 0,
+    "IconUrl": "https://raw.githubusercontent.com/53m1k0l0n/repo/main/LazyLoot/images/icon.png",
+    "DownloadLinkInstall": "https://github.com/53m1k0l0n/repo/blob/main/LazyLoot/latest.zip?raw=true",
+    "DownloadLinkTesting": "https://github.com/53m1k0l0n/repo/blob/main/LazyLoot/latest.zip?raw=true",
+    "DownloadLinkUpdate": "https://github.com/53m1k0l0n/repo/blob/main/LazyLoot/latest.zip?raw=true"
+  }
+]
