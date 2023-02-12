@@ -1,3 +1,7 @@
+You can use the 5.0.7.zip file from release https://github.com/53m1k0l0n/FFXIV-LazyLoot/releases/download/v5.0.7/5.0.7.zip and extract it here AppData\Roaming\XIVLauncher\installedPlugins\LazyLoot after that resart your game.
+
+GH does not deliver the current repo.json, i.e. Dalamud does not currently notice that there is an update.
+
 Well i found out that this is a problem that hits many people, so we only can wait till GH sorted this.
 
 Something is stil strange with github, i don't know whats worng, so please be paitent and if you have already above 5.0 please dont deinstall it.
