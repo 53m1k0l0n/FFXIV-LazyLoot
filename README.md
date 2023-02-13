@@ -1,6 +1,6 @@
-# FFXIV-LazyLoot
+https://img.shields.io/discord/1073993151561355275?style=for-the-badge
 
-53m1k0l0n#1175
+# FFXIV-LazyLoot
 
 Plugin for Final Fantasy XIV
 
