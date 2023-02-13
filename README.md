@@ -1,3 +1,5 @@
+[![](https://dcbadge.vercel.app/api/server/JRVF3DmGM2)](https://discord.gg/JRVF3DmGM2)
+
 # FFXIV-LazyLoot
 
 Plugin for Final Fantasy XIV
