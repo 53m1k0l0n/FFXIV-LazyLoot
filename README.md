@@ -1,3 +1,4 @@
+
 # FFXIV-LazyLoot
 
 53m1k0l0n#1175
