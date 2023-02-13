@@ -1,5 +1,3 @@
-https://img.shields.io/discord/1073993151561355275?style=for-the-badge
-
 # FFXIV-LazyLoot
 
 Plugin for Final Fantasy XIV
