@@ -1,4 +1,4 @@
-[![](https://dcbadge.vercel.app/api/server/JRVF3DmGM2)](https://discord.gg/JRVF3DmGM2)
+[![](https://dcbadge.vercel.app/api/server/Db938TNdMv)](https://discord.gg/Db938TNdMv)
 
 # FFXIV-LazyLoot
 
