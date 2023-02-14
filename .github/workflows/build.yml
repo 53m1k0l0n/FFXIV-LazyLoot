@@ -1,0 +1,74 @@
+name: Build Plugin
+
+env:
+  plugin_name: LazyLoot
+
+on:
+ workflow_dispatch:
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: 7.0.x
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Download Dalamud
+        if: "!contains(github.event.head_commit.message, '[stg]')"
+        run: |
+          curl -o latest.zip https://goatcorp.github.io/dalamud-distrib/latest.zip
+          unzip latest.zip -d ~/dalamud/
+      - name: Download Dalamud (staging)
+        if: "contains(github.event.head_commit.message, '[stg]')"
+        run: |
+            curl -o latest.zip https://goatcorp.github.io/dalamud-distrib/stg/latest.zip
+            unzip latest.zip -d ~/dalamud/
+      - name: Build
+        run: dotnet build -c Release -clp:NoSummary
+
+      - name: Rename manifest
+        run: mv bin/${{ env.plugin_name }}/${{ env.plugin_name }}.json bin/${{ env.plugin_name }}/manifest.json
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          path: bin/${{ env.plugin_name }}/*
+
+  release:
+    name: Release
+    needs: build
+    if: success() && startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Download Build Artifact
+        uses: actions/download-artifact@v3
+
+      - name: Extract release notes
+        id: extract-release-notes
+        uses: ffurrer2/extract-release-notes@v1
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: ${{ env.plugin_name }} ${{ github.ref_name }}
+          body: ${{ steps.extract-release-notes.outputs.release_notes }}
+          files: artifact/*
+
+      - name: Trigger Repo Update
+        uses: peter-evans/repository-dispatch@v1
+        with:
+          token: ${{ secrets.PAT }}
+          repository: ${{ github.repository_owner }}/FF14_Plugins
+          event-type: new-release
