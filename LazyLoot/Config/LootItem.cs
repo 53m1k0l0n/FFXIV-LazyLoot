@@ -7,16 +7,22 @@ namespace LazyLoot.Config
     {
         [FieldOffset(0)]
         public uint ObjectId;
+
         [FieldOffset(8)]
         public uint ItemId;
+
         [FieldOffset(32)]
         public RollState RollState;
+
         [FieldOffset(36)]
         public RollOption RolledState;
+
         [FieldOffset(44)]
         public float LeftRollTime;
+
         [FieldOffset(32)]
         public float TotalRollTime;
+
         [FieldOffset(60)]
         public uint Index;
 
