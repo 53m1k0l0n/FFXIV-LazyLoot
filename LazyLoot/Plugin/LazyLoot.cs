@@ -24,6 +24,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.AccessControl;
 using System.Threading.Tasks;
 
 namespace LazyLoot.Plugin
@@ -160,6 +161,7 @@ namespace LazyLoot.Plugin
         [DoNotShowInHelp]
         public async void NeedCommand(string command, string arguments)
         {
+            if (rolling) return;
             if (arguments.IsNullOrWhitespace() || arguments != "need" && arguments != "needonly" && arguments != "greed" && arguments != "pass" && arguments != "passall") return;
 
             items.AddRange(GetItems());
@@ -178,48 +180,57 @@ namespace LazyLoot.Plugin
 
             var itemRolls = new Dictionary<int, RollOption>();
 
-            for (int index = items.Count - 1; index >= 0; index--)
+            do
             {
-                var itemInfo = items[index];
-                LogBeforeRoll(index, itemInfo);
-                if (!items[index].Rolled || arguments == "passall")
+                rolling = true;
+                for (int index = items.Count - 1; index >= 0; index--)
                 {
-                    var itemData = Data.GetExcelSheet<Item>()!.GetRow(itemInfo.ItemId);
-                    switch (itemData)
+                    var itemInfo = items[index];
+                    LogBeforeRoll(index, itemInfo);
+                    if (!items[index].Rolled || arguments == "passall")
                     {
-                        // Item is non unique
-                        case { IsUnique: false }:
-                        // [OR] Item is unique, and isn't consumable, just check quantity. If zero means we dont have it in our inventory.
-                        case { IsUnique: true, ItemAction.Row: 0 } when GetItemCount(itemInfo.ItemId) == 0:
-                        // [OR] Item has a unlock action (Minions, cards, orchestrations, mounts, etc), 0 means item has not been unlocked
-                        case { ItemAction.Row: not 0 } when GetItemUnlockedAction(itemInfo) is 0:
-                            itemRolls.Add(index, RollStateToOption(items[index].RollState, arguments));
-                            break;
+                        var itemData = Data.GetExcelSheet<Item>()!.GetRow(itemInfo.ItemId);
+                        switch (itemData)
+                        {
+                            // Item is non unique
+                            case { IsUnique: false }:
+                            // [OR] Item is unique, and isn't consumable, just check quantity. If zero means we dont have it in our inventory.
+                            case { IsUnique: true, ItemAction.Row: 0 } when GetItemCount(itemInfo.ItemId) == 0:
+                            // [OR] Item has a unlock action (Minions, cards, orchestrations, mounts, etc), 0 means item has not been unlocked
+                            case { ItemAction.Row: not 0 } when GetItemUnlockedAction(itemInfo) is 0:
+                                itemRolls.Add(index, RollStateToOption(items[index].RollState, arguments));
+                                break;
 
-                        default:
-                            itemRolls.Add(index, RollOption.Pass);
-                            break;
+                            default:
+                                itemRolls.Add(index, RollOption.Pass);
+                                break;
+                        }
                     }
                 }
-            }
 
-            // Roll items
-            foreach (KeyValuePair<int, RollOption> entry in itemRolls)
-            {
-                await RollItemAsync(entry.Value, entry.Key);
-                switch (entry)
+                // Roll items
+                foreach (KeyValuePair<int, RollOption> entry in itemRolls)
                 {
-                    case { Value: RollOption.Need }:
-                        itemsNeed++;
-                        break; ;
-                    case { Value: RollOption.Greed }:
-                        itemsGreed++;
-                        break; ;
-                    case { Value: RollOption.Pass }:
-                        itemsPass++;
-                        break; ;
+                    await RollItemAsync(entry.Value, entry.Key);
+                    switch (entry)
+                    {
+                        case { Value: RollOption.Need }:
+                            itemsNeed++;
+                            break; ;
+                        case { Value: RollOption.Greed }:
+                            itemsGreed++;
+                            break; ;
+                        case { Value: RollOption.Pass }:
+                            itemsPass++;
+                            break; ;
+                    }
                 }
-            }
+
+                items.Clear();
+                itemRolls.Clear();
+                items.AddRange(GetItems());
+
+            } while (items.Any(x => !x.Rolled));
 
             ChatOutput(itemsNeed, itemsGreed, itemsPass);
             items.Clear();
@@ -326,7 +337,6 @@ namespace LazyLoot.Plugin
 
         private void NoticeLoot(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)
         {
-            if (rolling) return;
             if ((ushort)type != 2105) return;
             if (message.TextValue == ClientState.ClientLanguage switch
             {
@@ -336,8 +346,8 @@ namespace LazyLoot.Plugin
                 _ => "Cast your lot."
             })
             {
+                NeedCommand(string.Empty, SetFulfArguments());
                 LazyLoot.PluginInterface.UiBuilder.AddNotification(">>New Loot<<", "Lazy Loot", NotificationType.Info);
-                ////NeedCommand(string.Empty, string.Empty);
             }
         }
 
@@ -397,6 +407,22 @@ namespace LazyLoot.Plugin
                     LazyLoot.config.EnableNeedOnlyRoll = false;
                     LazyLoot.config.EnableGreedRoll = true;
                     break;
+            }
+        }
+
+        private string SetFulfArguments()
+        {
+            if (LazyLoot.config.EnableNeedRoll)
+            {
+                return "need";
+            }
+            else if (LazyLoot.config.EnableNeedOnlyRoll)
+            {
+                return "needonly";
+            }
+            else
+            {
+                return "greed";
             }
         }
 
