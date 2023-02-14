@@ -36,7 +36,7 @@ namespace LazyLoot.Ui
 
         public override bool DrawConditions()
         {
-            return Plugin.LazyLoot.config.EnableOverlay && Plugin.LazyLoot.autoLootEnabled;
+            return Plugin.LazyLoot.config.EnableOverlay && Plugin.LazyLoot.flufEnabled;
         }
 
         public override void PostDraw()

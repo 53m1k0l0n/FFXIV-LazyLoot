@@ -115,8 +115,8 @@ namespace LazyLoot.Ui
             ImGui.Spacing();
 
             ImGui.Text("Fancy Ultimate Lazy Feature. Enable or Disable with /fulf  (Not persistent), Status with /fulf?.");
-            ImGui.TextColored(Plugin.LazyLoot.autoLootEnabled ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed, "FULF");
-            if (Plugin.LazyLoot.autoLootEnabled)
+            ImGui.TextColored(Plugin.LazyLoot.flufEnabled ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed, "FULF");
+            if (Plugin.LazyLoot.flufEnabled)
             {
                 ImGui.Text("Options are persistent");
                 ImGui.Checkbox("Enable overlay when 'FULF' is enabled", ref Plugin.LazyLoot.config.EnableOverlay);

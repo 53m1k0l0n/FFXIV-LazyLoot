@@ -30,7 +30,7 @@ namespace LazyLoot.Plugin
 {
     public class LazyLoot : IDalamudPlugin, IDisposable
     {
-        public static bool autoLootEnabled;
+        public static bool flufEnabled;
         public ConfigUi configUi;
         internal static Configuration config;
         internal static RollItemRaw rollItemRaw;
@@ -90,15 +90,15 @@ namespace LazyLoot.Plugin
         [Command("/fulf")]
         [HelpMessage("En/Disable FULF")]
         [DoNotShowInHelp]
-        public void EnDisableAutoLoot(string command, string arguments)
+        public void EnDisableFluf(string command, string arguments)
         {
             var subArguments = arguments.Split(' ');
 
             if (subArguments[0] != "c")
             {
-                autoLootEnabled = !autoLootEnabled;
+                flufEnabled = !flufEnabled;
 
-                if (autoLootEnabled)
+                if (flufEnabled)
                 {
                     ToastGui.ShowQuest("FULF enabled", new QuestToastOptions() { DisplayCheckmark = true, PlaySound = true });
                     ChatGui.CheckMessageHandled += NoticeLoot;
@@ -128,9 +128,9 @@ namespace LazyLoot.Plugin
         [Command("/fulf?")]
         [HelpMessage("FULF status")]
         [DoNotShowInHelp]
-        public void IsEnDisableAutoLoot(string command, string arguments)
+        public void CheckFlufStatus(string command, string arguments)
         {
-            if (autoLootEnabled)
+            if (flufEnabled)
             {
                 if (LazyLoot.config.EnableNeedRoll)
                 {
@@ -239,7 +239,7 @@ namespace LazyLoot.Plugin
                 return;
             commandManager.Dispose();
 
-            if (autoLootEnabled)
+            if (flufEnabled)
             {
                 ChatGui.CheckMessageHandled -= NoticeLoot;
             }
