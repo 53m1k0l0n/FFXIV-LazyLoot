@@ -24,7 +24,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.AccessControl;
 using System.Threading.Tasks;
 
 namespace LazyLoot.Plugin
@@ -81,6 +80,36 @@ namespace LazyLoot.Plugin
 
         public string Name => "LazyLoot";
 
+        [Command("/fulf?")]
+        [HelpMessage("FULF status")]
+        [DoNotShowInHelp]
+        public void CheckFlufStatus(string command, string arguments)
+        {
+            if (flufEnabled)
+            {
+                if (LazyLoot.config.EnableNeedRoll)
+                {
+                    ToastGui.ShowQuest("FULF is enabled with Need");
+                }
+                else if (LazyLoot.config.EnableNeedOnlyRoll)
+                {
+                    ToastGui.ShowQuest("FULF is enabled with Needonly");
+                }
+                else if (LazyLoot.config.EnableGreedRoll)
+                {
+                    ToastGui.ShowQuest("FULF is enabled with greed");
+                }
+                else
+                {
+                    ToastGui.ShowQuest("FULF is enabled");
+                }
+            }
+            else
+            {
+                ToastGui.ShowQuest("FULF is disabled");
+            }
+        }
+
         public void Dispose()
         {
             PluginLog.Information(string.Format($">>Stop LazyLoot<<"));
@@ -124,36 +153,6 @@ namespace LazyLoot.Plugin
         public unsafe long GetItemUnlockedAction(LootItem itemInfo)
         {
             return UIState.Instance()->IsItemActionUnlocked(ExdModule.GetItemRowById(itemInfo.ItemId));
-        }
-
-        [Command("/fulf?")]
-        [HelpMessage("FULF status")]
-        [DoNotShowInHelp]
-        public void CheckFlufStatus(string command, string arguments)
-        {
-            if (flufEnabled)
-            {
-                if (LazyLoot.config.EnableNeedRoll)
-                {
-                    ToastGui.ShowQuest("FULF is enabled with Need");
-                }
-                else if (LazyLoot.config.EnableNeedOnlyRoll)
-                {
-                    ToastGui.ShowQuest("FULF is enabled with Needonly");
-                }
-                else if (LazyLoot.config.EnableGreedRoll)
-                {
-                    ToastGui.ShowQuest("FULF is enabled with greed");
-                }
-                else
-                {
-                    ToastGui.ShowQuest("FULF is enabled");
-                }
-            }
-            else
-            {
-                ToastGui.ShowQuest("FULF is disabled");
-            }
         }
 
         [Command("/roll")]
@@ -229,7 +228,6 @@ namespace LazyLoot.Plugin
                 items.Clear();
                 itemRolls.Clear();
                 items.AddRange(GetItems());
-
             } while (items.Any(x => !x.Rolled));
 
             ChatOutput(itemsNeed, itemsGreed, itemsPass);
@@ -301,13 +299,15 @@ namespace LazyLoot.Plugin
 
         private unsafe int GetItemCount(uint itemId)
         {
-            // Only check main inventories, don't include any special inventories
+            //// Only check main inventories, don't include any special inventories
             var inventories = new List<InventoryType>
         {
+            //// DefaultInventory
             InventoryType.Inventory1,
             InventoryType.Inventory2,
             InventoryType.Inventory3,
             InventoryType.Inventory4,
+            //// Armory
             InventoryType.ArmoryBody,
             InventoryType.ArmoryEar,
             InventoryType.ArmoryFeets,
@@ -320,6 +320,7 @@ namespace LazyLoot.Plugin
             InventoryType.ArmoryRings,
             InventoryType.ArmoryWaist,
             InventoryType.ArmoryWrist,
+            //// EquipedGear
             InventoryType.EquippedItems,
         };
             return inventories.Sum(inventory => InventoryManager.Instance()->GetItemCountInContainer(itemId, inventory));
@@ -386,6 +387,22 @@ namespace LazyLoot.Plugin
             };
         }
 
+        private string SetFulfArguments()
+        {
+            if (LazyLoot.config.EnableNeedRoll)
+            {
+                return "need";
+            }
+            else if (LazyLoot.config.EnableNeedOnlyRoll)
+            {
+                return "needonly";
+            }
+            else
+            {
+                return "greed";
+            }
+        }
+
         private void SetRollOption(string subArgument)
         {
             switch (subArgument)
@@ -407,22 +424,6 @@ namespace LazyLoot.Plugin
                     LazyLoot.config.EnableNeedOnlyRoll = false;
                     LazyLoot.config.EnableGreedRoll = true;
                     break;
-            }
-        }
-
-        private string SetFulfArguments()
-        {
-            if (LazyLoot.config.EnableNeedRoll)
-            {
-                return "need";
-            }
-            else if (LazyLoot.config.EnableNeedOnlyRoll)
-            {
-                return "needonly";
-            }
-            else
-            {
-                return "greed";
             }
         }
 
