@@ -1,5 +1,8 @@
 name: Build and Release LazyLoot
 
+env:
+  plugin_name: LazyLoot
+
 on:
   workflow_dispatch:
   push:
@@ -28,11 +31,14 @@ jobs:
         - name: Build Plugin
           run: |
            invoke-expression 'dotnet build --no-restore --configuration Release LazyLoot'
+           
+        - name: Rename manifest
+          run: Rename-Item -Path .\${{ env.plugin_name }}\bin\Release\${{ env.plugin_name }}\${{ env.plugin_name }}.json -NewName manifest.json
 
         - name: Upload Artifact
           uses: actions/upload-artifact@v3
           with:
-            path: .\LazyLoot\bin\Release\LazyLoot\
+            path: .\${{ env.plugin_name }}\bin\Release\${{ env.plugin_name }}\
             
     release:
         name: release-LazyLoot
