@@ -1,53 +1,71 @@
-name: Build Plugin
+name: Build and Release LazyLoot
 
 env:
   plugin_name: LazyLoot
 
 on:
- workflow_dispatch:
-
+  workflow_dispatch:
+  push:
+  pull_request:
+  
 jobs:
-  build:
-    name: Build
-    runs-on: [windows-2022]
+    build-LazyLoot:
+      name: Build LazyLoot
+      runs-on: windows-latest
+      steps:
+        - uses: actions/checkout@v2
 
-    steps:
-      - uses: actions/checkout@v3
-
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v2
-        with:
-          dotnet-version: 7.0.x
-
-      - name: Setup MSBuild
-        uses: microsoft/setup-msbuild@v1.1.1
-        with:
-          vs-prerelease: true
-        
-      - name: Setup NuGet
-        uses: NuGet/setup-nuget@v1.0.5
-        
-      - name: Restore NuGet Packages
-        run: nuget restore LazyLoot.sln
-
-      - name: Download Dalamud
-        if: "!contains(github.event.head_commit.message, '[stg]')"
-        run: |
-          Invoke-WebRequest -Uri https://goatcorp.github.io/dalamud-distrib/latest.zip -OutFile latest.zip
-          Expand-Archive -Force latest.zip "$env:AppData\XIVLauncher\addon\Hooks\dev"
-      - name: Download Dalamud staging
-        if: "contains(github.event.head_commit.message, '[stg]')"
-        run: |
-            Invoke-WebRequest -Uri https://goatcorp.github.io/dalamud-distrib/stg/latest.zip -OutFile latest.zip
+        - name: Set up .NET
+          uses: actions/setup-dotnet@v1
+          with:
+             dotnet-version: 7.0.x
+             
+        - name: Restore Dependencies
+          run: dotnet restore
+          
+        - name: Download Dalamud
+          run: |
+            Invoke-WebRequest -Uri https://goatcorp.github.io/dalamud-distrib/latest.zip -OutFile latest.zip
             Expand-Archive -Force latest.zip "$env:AppData\XIVLauncher\addon\Hooks\dev"
+
+        - name: Build Plugin
+          run: |
+           invoke-expression 'dotnet build --no-restore --configuration Release LazyLoot'
+           
+        - name: Rename manifest
+          run: .\${{ env.plugin_name }}\bin\Release\${{ env.plugin_name }}\${{ env.plugin_name }}.json .\${{ env.plugin_name }}\bin\Release\${{ env.plugin_name }}\manifest.json
+
+        - name: Upload Artifact
+          uses: actions/upload-artifact@v3
+          with:
+            path: .\${{ env.plugin_name }}\bin\Release\${{ env.plugin_name }}\
             
-      - name: Build
-        run: dotnet build -c Release -clp:NoSummary
+    release:
+        name: release-LazyLoot
+        needs: build-LazyLoot
+        if: success() && startsWith(github.ref, 'refs/tags/v')
+        runs-on: ubuntu-latest
 
-      - name: Rename manifest
-        run: mv bin/${{ env.plugin_name }}/${{ env.plugin_name }}.json bin/${{ env.plugin_name }}/manifest.json
+        steps:
+          - uses: actions/checkout@v3
 
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          path: bin/${{ env.plugin_name }}/*
+          - name: Download Build Artifact
+            uses: actions/download-artifact@v3
+
+          - name: Extract release notes
+            id: extract-release-notes
+            uses: ffurrer2/extract-release-notes@v1
+
+          - name: Release
+            uses: softprops/action-gh-release@v1
+            with:
+              name: ${{ github.ref_name }}
+              body: ${{ steps.extract-release-notes.outputs.release_notes }}
+              files: artifact/*
+
+          - name: Trigger Repo Update
+            uses: peter-evans/repository-dispatch@v1
+            with:
+              token: ${{ secrets.PAT }}
+              repository: ${{ github.repository_owner }}/FF14_Plugins
+              event-type: new-release
