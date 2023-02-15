@@ -39,7 +39,7 @@ namespace LazyLoot.Plugin
         private readonly List<LootItem> items = new();
         private readonly OverlayUi overlay;
         private uint lastItem = 123456789;
-        private bool rolling;
+        private bool isRolling;
 
         public LazyLoot(DalamudPluginInterface pluginInterface)
         {
@@ -160,7 +160,7 @@ namespace LazyLoot.Plugin
         [DoNotShowInHelp]
         public async void NeedCommand(string command, string arguments)
         {
-            if (rolling) return;
+            if (isRolling) return;
             if (arguments.IsNullOrWhitespace() || arguments != "need" && arguments != "needonly" && arguments != "greed" && arguments != "pass" && arguments != "passall") return;
 
             items.AddRange(GetItems());
@@ -181,7 +181,7 @@ namespace LazyLoot.Plugin
 
             do
             {
-                rolling = true;
+                isRolling = true;
                 for (int index = items.Count - 1; index >= 0; index--)
                 {
                     var itemInfo = items[index];
@@ -232,7 +232,7 @@ namespace LazyLoot.Plugin
 
             ChatOutput(itemsNeed, itemsGreed, itemsPass);
             items.Clear();
-            rolling = false;
+            isRolling = false;
         }
 
         [Command("/lazy")]
@@ -338,6 +338,7 @@ namespace LazyLoot.Plugin
 
         private void NoticeLoot(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)
         {
+            if (isRolling) return;
             if ((ushort)type != 2105) return;
             if (message.TextValue == ClientState.ClientLanguage switch
             {
