@@ -192,7 +192,7 @@ namespace LazyLoot.Plugin
                     {
                         var itemData = Data.GetExcelSheet<Item>()!.GetRow(itemInfo.ItemId);
                         if (itemData is null) continue;
-                        PluginLog.Information(string.Format($"Item Data : {itemData.Name} : IsUnique = {itemData.IsUnique} : IsUntradable = {itemData.IsUntradable} : Unlocked = {GetItemUnlockedAction(itemInfo)}"));
+                        PluginLog.Information(string.Format($"Item Data : {itemData.Name} : Row {itemData.ItemAction.Row} : IsUnique = {itemData.IsUnique} : IsUntradable = {itemData.IsUntradable} : Unlocked = {GetItemUnlockedAction(itemInfo)}"));
                         switch (itemData)
                         {
                             // Item is non unique
@@ -386,8 +386,11 @@ namespace LazyLoot.Plugin
         {
             return rollState switch
             {
-                RollState.UpToNeed when arguments == "need" || arguments == "needonly" => RollOption.Need,
-                RollState.UpToGreed when arguments != "pass" || arguments != "passall" => RollOption.Greed,
+                RollState.UpToNeed when arguments == "need" => RollOption.Need,
+                RollState.UpToNeed when arguments == "needonly" => RollOption.Need,
+                RollState.UpToGreed when arguments != "pass" => RollOption.Greed,
+                RollState.UpToGreed when arguments != "passall" => RollOption.Greed,
+                RollState.UpToGreed when arguments != "needonly" => RollOption.Greed,
                 _ => RollOption.Pass,
             };
         }
