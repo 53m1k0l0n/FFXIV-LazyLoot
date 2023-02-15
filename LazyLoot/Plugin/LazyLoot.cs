@@ -25,6 +25,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using static FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentList;
 
 namespace LazyLoot.Plugin
 {
@@ -185,10 +186,13 @@ namespace LazyLoot.Plugin
                 for (int index = items.Count - 1; index >= 0; index--)
                 {
                     var itemInfo = items[index];
+                    if (itemInfo.ItemId is 0) continue;
                     LogBeforeRoll(index, itemInfo);
                     if (!items[index].Rolled || arguments == "passall")
                     {
                         var itemData = Data.GetExcelSheet<Item>()!.GetRow(itemInfo.ItemId);
+                        if (itemData is null) continue;
+                        PluginLog.Information(string.Format($"Item Data : {itemData.Name} : IsUnique = {itemData.IsUnique} : IsUntradable = {itemData.IsUntradable} : Unlocked = {GetItemUnlockedAction(itemInfo)}"));
                         switch (itemData)
                         {
                             // Item is non unique
