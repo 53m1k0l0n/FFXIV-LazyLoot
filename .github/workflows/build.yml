@@ -33,7 +33,7 @@ jobs:
            invoke-expression 'dotnet build --no-restore --configuration Release LazyLoot'
            
         - name: Rename manifest
-          run: .\${{ env.plugin_name }}\bin\Release\${{ env.plugin_name }}\${{ env.plugin_name }}.json .\${{ env.plugin_name }}\bin\Release\${{ env.plugin_name }}\manifest.json
+          run: rename .\${{ env.plugin_name }}\bin\Release\${{ env.plugin_name }}\${{ env.plugin_name }}.json .\${{ env.plugin_name }}\bin\Release\${{ env.plugin_name }}\manifest.json
 
         - name: Upload Artifact
           uses: actions/upload-artifact@v3
