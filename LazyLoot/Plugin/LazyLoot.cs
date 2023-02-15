@@ -386,11 +386,8 @@ namespace LazyLoot.Plugin
         {
             return rollState switch
             {
-                RollState.UpToNeed when arguments == "need" => RollOption.Need,
-                RollState.UpToNeed when arguments == "needonly" => RollOption.Need,
-                RollState.UpToGreed when arguments != "pass" => RollOption.Greed,
-                RollState.UpToGreed when arguments != "passall" => RollOption.Greed,
-                RollState.UpToGreed when arguments != "needonly" => RollOption.Greed,
+                RollState.UpToNeed when arguments == "need" || arguments == "needonly" => RollOption.Need,
+                RollState.UpToGreed when arguments != "pass" && arguments != "passall" && arguments != "needonly" => RollOption.Greed,
                 _ => RollOption.Pass,
             };
         }
