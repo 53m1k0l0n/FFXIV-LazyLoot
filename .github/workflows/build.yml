@@ -1,4 +1,4 @@
-name: Build and Release LazyLoot
+name: Build LazyLoot
 
 env:
   plugin_name: LazyLoot
