@@ -25,7 +25,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
-using static FFXIVClientStructs.FFXIV.Component.GUI.AtkComponentList;
 
 namespace LazyLoot.Plugin
 {
@@ -199,8 +198,8 @@ namespace LazyLoot.Plugin
                             case { IsUnique: false }:
                             // [OR] Item is unique, and isn't consumable, just check quantity. If zero means we dont have it in our inventory.
                             case { IsUnique: true, ItemAction.Row: 0 } when GetItemCount(itemInfo.ItemId) == 0:
-                            // [OR] Item has a unlock action (Minions, cards, orchestrations, mounts, etc), 0 means item has not been unlocked
-                            case { ItemAction.Row: not 0 } when GetItemUnlockedAction(itemInfo) is 0:
+                            // [OR] Item has a unlock action (Minions, cards, orchestrations, mounts, etc), 2 means item has not been unlocked
+                            case { ItemAction.Row: not 0 } when GetItemUnlockedAction(itemInfo) is 2:
                                 itemRolls.Add(index, RollStateToOption(items[index].RollState, arguments));
                                 break;
 
@@ -387,7 +386,7 @@ namespace LazyLoot.Plugin
             return rollState switch
             {
                 RollState.UpToNeed when arguments == "need" || arguments == "needonly" => RollOption.Need,
-                RollState.UpToGreed when arguments != "pass" && arguments != "passall" && arguments != "needonly" => RollOption.Greed,
+                RollState.UpToGreed when arguments == "greed" || arguments == "need" => RollOption.Greed,
                 _ => RollOption.Pass,
             };
         }
