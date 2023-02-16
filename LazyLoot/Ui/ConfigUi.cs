@@ -114,7 +114,7 @@ namespace LazyLoot.Ui
 
             ImGui.Spacing();
 
-            ImGui.Text("Fancy Ultimate Lazy Feature. Enable or Disable with /fulf  (Not persistent), Status with /fulf?.");
+            ImGui.Text("Fancy Ultimate Lazy Feature. Enable or Disable with /fulf  (Not persistent).");
             ImGui.TextColored(Plugin.LazyLoot.FulfEnabled ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed, "FULF");
             if (Plugin.LazyLoot.FulfEnabled)
             {
