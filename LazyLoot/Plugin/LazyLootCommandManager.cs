@@ -38,7 +38,7 @@ namespace LazyLoot.Plugin
             for (int index = 0; index < pluginCommands.Length; ++index)
             {
                 (string, CommandInfo) pluginCommand = pluginCommands[index];
-                LazyLoot.CommandManager.AddHandler(pluginCommand.Item1, pluginCommand.Item2);
+                Service.Service.CommandManager.AddHandler(pluginCommand.Item1, pluginCommand.Item2);
             }
         }
 
@@ -71,7 +71,7 @@ namespace LazyLoot.Plugin
         private void RemoveCommandHandlers()
         {
             for (int index = 0; index < pluginCommands.Length; ++index)
-                LazyLoot.CommandManager.RemoveHandler(pluginCommands[index].Item1);
+                Service.Service.CommandManager.RemoveHandler(pluginCommands[index].Item1);
         }
     }
 }

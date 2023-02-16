@@ -23,12 +23,12 @@ namespace LazyLoot.Ui
                 MaximumSize = new Vector2(99999, 99999),
             };
             windowSystem.AddWindow(this);
-            Plugin.LazyLoot.PluginInterface.UiBuilder.Draw += windowSystem.Draw;
+            Service.Service.PluginInterface.UiBuilder.Draw += windowSystem.Draw;
         }
 
         public void Dispose()
         {
-            Plugin.LazyLoot.PluginInterface.UiBuilder.Draw -= windowSystem.Draw;
+            Service.Service.PluginInterface.UiBuilder.Draw -= windowSystem.Draw;
             GC.SuppressFinalize(this);
         }
 
@@ -115,51 +115,54 @@ namespace LazyLoot.Ui
             ImGui.Spacing();
 
             ImGui.Text("Fancy Ultimate Lazy Feature. Enable or Disable with /fulf  (Not persistent), Status with /fulf?.");
-            ImGui.TextColored(Plugin.LazyLoot.flufEnabled ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed, "FULF");
-            if (Plugin.LazyLoot.flufEnabled)
+            ImGui.TextColored(Plugin.LazyLoot.FulfEnabled ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed, "FULF");
+            if (Plugin.LazyLoot.FulfEnabled)
             {
                 ImGui.Text("Options are persistent");
-                ImGui.Checkbox("Enable overlay when 'FULF' is enabled", ref Plugin.LazyLoot.config.EnableOverlay);
-                if (Plugin.LazyLoot.config.EnableOverlay)
+
+                if (Plugin.LazyLoot.config.EnableNeedOnlyRoll)
                 {
-                    ImGui.SetNextItemWidth(100f);
-                    ImGui.DragFloat2("Overlay offset", ref Plugin.LazyLoot.config.OverlayOffset);
+                    rollPreview = "Need only";
+                }
+                else if (Plugin.LazyLoot.config.EnableGreedRoll)
+                {
+                    rollPreview = "Greed";
+                }
+                else
+                {
+                    rollPreview = "Need";
+                }
 
-                    if (Plugin.LazyLoot.config.EnableNeedOnlyRoll)
+                if (ImGui.BeginCombo("Roll options", rollPreview))
+                {
+                    if (ImGui.Selectable("Need", ref Plugin.LazyLoot.config.EnableNeedRoll))
                     {
-                        rollPreview = "Need only";
+                        Plugin.LazyLoot.config.EnableNeedOnlyRoll = false;
+                        Plugin.LazyLoot.config.EnableGreedRoll = false;
+                        Plugin.LazyLoot.config.EnablePassRoll = false;
                     }
-                    else if (Plugin.LazyLoot.config.EnableGreedRoll)
+
+                    if (ImGui.Selectable("Need only", ref Plugin.LazyLoot.config.EnableNeedOnlyRoll))
                     {
-                        rollPreview = "Greed";
+                        Plugin.LazyLoot.config.EnableNeedRoll = false;
+                        Plugin.LazyLoot.config.EnableGreedRoll = false;
+                        Plugin.LazyLoot.config.EnablePassRoll = false;
                     }
-                    else
+
+                    if (ImGui.Selectable("Greed", ref Plugin.LazyLoot.config.EnableGreedRoll))
                     {
-                        rollPreview = "Need";
+                        Plugin.LazyLoot.config.EnableNeedRoll = false;
+                        Plugin.LazyLoot.config.EnableNeedOnlyRoll = false;
+                        Plugin.LazyLoot.config.EnablePassRoll = false;
                     }
 
-                    if (ImGui.BeginCombo("Roll options", rollPreview))
+                    if (ImGui.Selectable("Pass", ref Plugin.LazyLoot.config.EnablePassRoll))
                     {
-                        if (ImGui.Selectable("Need", ref Plugin.LazyLoot.config.EnableNeedRoll))
-                        {
-                            Plugin.LazyLoot.config.EnableNeedOnlyRoll = false;
-                            Plugin.LazyLoot.config.EnableGreedRoll = false;
-                        }
-
-                        if (ImGui.Selectable("Need only", ref Plugin.LazyLoot.config.EnableNeedOnlyRoll))
-                        {
-                            Plugin.LazyLoot.config.EnableNeedRoll = false;
-                            Plugin.LazyLoot.config.EnableGreedRoll = false;
-                        }
-
-                        if (ImGui.Selectable("Greed", ref Plugin.LazyLoot.config.EnableGreedRoll))
-                        {
-                            Plugin.LazyLoot.config.EnableNeedRoll = false;
-                            Plugin.LazyLoot.config.EnableNeedOnlyRoll = false;
-                        }
-
-                        ImGui.EndCombo();
+                        Plugin.LazyLoot.config.EnableNeedRoll = false;
+                        Plugin.LazyLoot.config.EnableNeedOnlyRoll = false;
                     }
+
+                    ImGui.EndCombo();
                 }
             }
 
@@ -167,19 +170,19 @@ namespace LazyLoot.Ui
             if (ImGui.Button("Save"))
             {
                 Plugin.LazyLoot.config.Save();
-                Plugin.LazyLoot.PluginInterface.UiBuilder.AddNotification("Configuration saved", "Lazy Loot", NotificationType.Success);
+                Service.Service.PluginInterface.UiBuilder.AddNotification("Configuration saved", "Lazy Loot", NotificationType.Success);
             }
             ImGui.SameLine();
             if (ImGui.Button("Save and Close"))
             {
-                lazyLoot.configUi.IsOpen = false;
+                lazyLoot.ConfigUi.IsOpen = false;
             }
         }
 
         public override void OnClose()
         {
             Plugin.LazyLoot.config.Save();
-            Plugin.LazyLoot.PluginInterface.UiBuilder.AddNotification("Configuration saved", "Lazy Loot", NotificationType.Success);
+            Service.Service.PluginInterface.UiBuilder.AddNotification("Configuration saved", "Lazy Loot", NotificationType.Success);
             base.OnClose();
         }
     }

@@ -1,15 +1,11 @@
 ﻿using Dalamud;
-using Dalamud.Data;
 using Dalamud.Game;
-using Dalamud.Game.ClientState;
-using Dalamud.Game.Command;
-using Dalamud.Game.Gui;
+using Dalamud.Game.Gui.Dtr;
 using Dalamud.Game.Gui.Toast;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
 using Dalamud.Interface.Internal.Notifications;
-using Dalamud.IoC;
 using Dalamud.Logging;
 using Dalamud.Plugin;
 using Dalamud.Utility;
@@ -30,85 +26,35 @@ namespace LazyLoot.Plugin
 {
     public class LazyLoot : IDalamudPlugin, IDisposable
     {
-        public static bool flufEnabled;
-        public ConfigUi configUi;
+        public static DtrBarEntry DtrEntry;
+        public static bool FulfEnabled;
+        public ConfigUi ConfigUi;
         internal static Configuration config;
         internal static RollItemRaw rollItemRaw;
         private static IntPtr lootsAddr;
         private readonly LazyLootCommandManager<LazyLoot> commandManager;
         private readonly List<LootItem> items = new();
-        private readonly OverlayUi overlay;
-        private uint lastItem = 123456789;
         private bool isRolling;
+        private uint lastItem = 123456789;
 
         public LazyLoot(DalamudPluginInterface pluginInterface)
         {
-            PluginInterface = pluginInterface;
-            lootsAddr = SigScanner.GetStaticAddressFromSig("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 89 44 24 60", 0);
-            rollItemRaw = Marshal.GetDelegateForFunctionPointer<RollItemRaw>(SigScanner.ScanText("41 83 F8 ?? 0F 83 ?? ?? ?? ?? 48 89 5C 24 08"));
-            config = PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            config.Initialize(PluginInterface);
-            configUi = new ConfigUi(this);
-            overlay = new OverlayUi();
-            configUi.windowSystem.AddWindow(overlay);
-            PluginInterface.UiBuilder.OpenConfigUi += delegate { configUi.IsOpen = true; };
-            commandManager = new LazyLootCommandManager<LazyLoot>(this, PluginInterface);
+            pluginInterface.Create<Service.Service>();
+            lootsAddr = Service.Service.SigScanner.GetStaticAddressFromSig("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 89 44 24 60", 0);
+            rollItemRaw = Marshal.GetDelegateForFunctionPointer<RollItemRaw>(Service.Service.SigScanner.ScanText("41 83 F8 ?? 0F 83 ?? ?? ?? ?? 48 89 5C 24 08"));
+            config = Service.Service.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            config.Initialize(Service.Service.PluginInterface);
+            ConfigUi = new ConfigUi(this);
+            Service.Service.PluginInterface.UiBuilder.OpenConfigUi += delegate { ConfigUi.IsOpen = true; };
+            commandManager = new LazyLootCommandManager<LazyLoot>(this, Service.Service.PluginInterface);
+            DtrEntry ??= Service.Service.DtrBar.Get("LazyLoot");
+
+            Service.Service.Framework.Update += OnFrameworkUpdate;
         }
 
         internal delegate void RollItemRaw(IntPtr lootIntPtr, RollOption option, uint lootItemIndex);
 
-        [PluginService]
-        public static ChatGui ChatGui { get; set; }
-
-        [PluginService]
-        public static ClientState ClientState { get; private set; }
-
-        [PluginService]
-        public static CommandManager CommandManager { get; set; }
-
-        [PluginService]
-        public static DataManager Data { get; private set; }
-
-        [PluginService]
-        public static DalamudPluginInterface PluginInterface { get; set; }
-
-        [PluginService]
-        public static SigScanner SigScanner { get; set; }
-
-        [PluginService]
-        public static ToastGui ToastGui { get; private set; }
-
         public string Name => "LazyLoot";
-
-        [Command("/fulf?")]
-        [HelpMessage("FULF status")]
-        [DoNotShowInHelp]
-        public void CheckFlufStatus(string command, string arguments)
-        {
-            if (flufEnabled)
-            {
-                if (LazyLoot.config.EnableNeedRoll)
-                {
-                    ToastGui.ShowQuest("FULF is enabled with Need");
-                }
-                else if (LazyLoot.config.EnableNeedOnlyRoll)
-                {
-                    ToastGui.ShowQuest("FULF is enabled with Needonly");
-                }
-                else if (LazyLoot.config.EnableGreedRoll)
-                {
-                    ToastGui.ShowQuest("FULF is enabled with greed");
-                }
-                else
-                {
-                    ToastGui.ShowQuest("FULF is enabled");
-                }
-            }
-            else
-            {
-                ToastGui.ShowQuest("FULF is disabled");
-            }
-        }
 
         public void Dispose()
         {
@@ -126,17 +72,17 @@ namespace LazyLoot.Plugin
 
             if (subArguments[0] != "c")
             {
-                flufEnabled = !flufEnabled;
+                FulfEnabled = !FulfEnabled;
 
-                if (flufEnabled)
+                if (FulfEnabled)
                 {
-                    ToastGui.ShowQuest("FULF enabled", new QuestToastOptions() { DisplayCheckmark = true, PlaySound = true });
-                    ChatGui.CheckMessageHandled += NoticeLoot;
+                    Service.Service.ToastGui.ShowQuest("FULF enabled", new QuestToastOptions() { DisplayCheckmark = true, PlaySound = true });
+                    Service.Service.ChatGui.CheckMessageHandled += NoticeLoot;
                 }
                 else
                 {
-                    ToastGui.ShowQuest("FULF disabled", new QuestToastOptions() { DisplayCheckmark = true, PlaySound = true });
-                    ChatGui.CheckMessageHandled -= NoticeLoot;
+                    Service.Service.ToastGui.ShowQuest("FULF disabled", new QuestToastOptions() { DisplayCheckmark = true, PlaySound = true });
+                    Service.Service.ChatGui.CheckMessageHandled -= NoticeLoot;
                 }
             }
 
@@ -156,19 +102,28 @@ namespace LazyLoot.Plugin
         }
 
         [Command("/roll")]
-        [HelpMessage("Roll need for everything. If impossible roll greed or pass if greed is impossible.")]
+        [HelpMessage("Roll for the loot according to the argument and the item's RollState.")]
         [DoNotShowInHelp]
-        public async void NeedCommand(string command, string arguments)
+        public async void RollCommand(string command, string arguments)
         {
             if (isRolling) return;
-            if (arguments.IsNullOrWhitespace() || arguments != "need" && arguments != "needonly" && arguments != "greed" && arguments != "pass" && arguments != "passall") return;
+            if (FulfEnabled && !string.IsNullOrEmpty(command) && arguments != "passall") return;
+            if (arguments.IsNullOrWhitespace() || (arguments != "need" && arguments != "needonly" && arguments != "greed" && arguments != "pass" && arguments != "passall")) return;
+
+            isRolling = true;
+
+            if (FulfEnabled && arguments != "passall")
+            {
+                await Task.Delay(TimeSpan.FromSeconds(5));
+            }
 
             items.AddRange(GetItems());
-            if (items.All(x => x.Rolled))
+
+            if (items.All(x => x.Rolled) && arguments != "passall")
             {
                 if (config.EnableToastMessage)
                 {
-                    ToastGui.ShowError(">>No new loot<<");
+                    Service.Service.ToastGui.ShowError(">>No new loot<<");
                 }
                 return;
             }
@@ -179,9 +134,8 @@ namespace LazyLoot.Plugin
 
             var itemRolls = new Dictionary<int, RollOption>();
 
-            do
+            try
             {
-                isRolling = true;
                 for (int index = items.Count - 1; index >= 0; index--)
                 {
                     var itemInfo = items[index];
@@ -189,9 +143,9 @@ namespace LazyLoot.Plugin
                     LogBeforeRoll(index, itemInfo);
                     if (!items[index].Rolled || arguments == "passall")
                     {
-                        var itemData = Data.GetExcelSheet<Item>()!.GetRow(itemInfo.ItemId);
+                        var itemData = Service.Service.Data.GetExcelSheet<Item>()!.GetRow(itemInfo.ItemId);
                         if (itemData is null) continue;
-                        PluginLog.Information(string.Format($"Item Data : {itemData.Name} : Row {itemData.ItemAction.Row} : IsUnique = {itemData.IsUnique} : IsUntradable = {itemData.IsUntradable} : Unlocked = {GetItemUnlockedAction(itemInfo)}"));
+                        PluginLog.LogInformation(string.Format($"Item Data : {itemData.Name} : Row {itemData.ItemAction.Row} : IsUnique = {itemData.IsUnique} : IsUntradable = {itemData.IsUntradable} : Unlocked = {GetItemUnlockedAction(itemInfo)}"));
                         switch (itemData)
                         {
                             // Item is non unique
@@ -228,21 +182,24 @@ namespace LazyLoot.Plugin
                     }
                 }
 
+                ChatOutput(itemsNeed, itemsGreed, itemsPass);
+            }
+            catch (Exception ex)
+            {
+                PluginLog.LogError(ex, "Something went really bad. Please contact the author!");
+            }
+            finally
+            {
                 items.Clear();
-                itemRolls.Clear();
-                items.AddRange(GetItems());
-            } while (items.Any(x => !x.Rolled));
-
-            ChatOutput(itemsNeed, itemsGreed, itemsPass);
-            items.Clear();
-            isRolling = false;
+                isRolling = false;
+            }
         }
 
         [Command("/lazy")]
         [HelpMessage("Open Lazy Loot config.")]
         public void OpenConfig(string command, string arguments)
         {
-            configUi.IsOpen = !configUi.IsOpen;
+            ConfigUi.IsOpen = !ConfigUi.IsOpen;
         }
 
         protected virtual void Dispose(bool disposing)
@@ -250,13 +207,15 @@ namespace LazyLoot.Plugin
             if (!disposing)
                 return;
             commandManager.Dispose();
+            DtrEntry.Remove();
 
-            if (flufEnabled)
+            if (FulfEnabled)
             {
-                ChatGui.CheckMessageHandled -= NoticeLoot;
+                Service.Service.ChatGui.CheckMessageHandled -= NoticeLoot;
             }
 
-            PluginInterface.SavePluginConfig(config);
+            Service.Service.Framework.Update -= OnFrameworkUpdate;
+            Service.Service.PluginInterface.SavePluginConfig(config);
         }
 
         private void ChatOutput(int num1, int num2, int num3)
@@ -280,12 +239,15 @@ namespace LazyLoot.Plugin
 
             SeString seString = new(payloadList);
 
-            if (LazyLoot.config.EnableChatLogMessage)
+            if (config.EnableChatLogMessage)
             {
-                ChatGui.Print(seString);
+                Service.Service.ChatGui.Print(seString);
             }
 
-            ToastOutput(seString);
+            if (config.EnableToastMessage)
+            {
+                ToastOutput(seString);
+            }
         }
 
         private LootItem GetItem(int index)
@@ -336,14 +298,14 @@ namespace LazyLoot.Plugin
 
         private void LogBeforeRoll(int index, LootItem lootItem)
         {
-            PluginLog.Information(string.Format($"Before : [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState} rolled: {lootItem.Rolled}"));
+            PluginLog.LogInformation(string.Format($"Before : [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState} rolled: {lootItem.Rolled}"));
         }
 
         private void NoticeLoot(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)
         {
             if (isRolling) return;
             if ((ushort)type != 2105) return;
-            if (message.TextValue == ClientState.ClientLanguage switch
+            if (message.TextValue == Service.Service.ClientState.ClientLanguage switch
             {
                 ClientLanguage.German => "Bitte um das Beutegut würfeln.",
                 ClientLanguage.French => "Veuillez lancer les dés pour le butin.",
@@ -351,8 +313,38 @@ namespace LazyLoot.Plugin
                 _ => "Cast your lot."
             })
             {
-                NeedCommand(string.Empty, SetFulfArguments());
-                LazyLoot.PluginInterface.UiBuilder.AddNotification(">>New Loot<<", "Lazy Loot", NotificationType.Info);
+                RollCommand(string.Empty, SetFulfArguments());
+                Service.Service.PluginInterface.UiBuilder.AddNotification(">>New Loot<<", "Lazy Loot", NotificationType.Info);
+            }
+        }
+
+        private void OnFrameworkUpdate(Framework framework)
+        {
+            if (FulfEnabled)
+            {
+                DtrEntry.Text = "LL-FULF";
+
+                if (config.EnableNeedRoll)
+                {
+                    DtrEntry.Text += " - Need";
+                }
+                else if (config.EnableNeedOnlyRoll)
+                {
+                    DtrEntry.Text += " - Need Only";
+                }
+                else if (config.EnableGreedRoll)
+                {
+                    DtrEntry.Text += " - Greed Only";
+                }
+                else if (config.EnablePassRoll)
+                {
+                    DtrEntry.Text += " - Pass";
+                }
+                DtrEntry.Shown = true;
+            }
+            else
+            {
+                DtrEntry.Shown = false;
             }
         }
 
@@ -372,13 +364,13 @@ namespace LazyLoot.Plugin
         {
             rollItemRaw(lootsAddr, option, (uint)index);
 
-            if (LazyLoot.config.EnableRollDelay)
+            if (config.EnableRollDelay)
             {
-                await Task.Delay(TimeSpan.FromSeconds(LazyLoot.config.RollDelayInSeconds).Add(TimeSpan.FromMilliseconds(new Random().Next(251))));
+                await Task.Delay(TimeSpan.FromSeconds(config.RollDelayInSeconds).Add(TimeSpan.FromMilliseconds(new Random().Next(251))));
             }
 
             LootItem lootItem = GetItem(index);
-            PluginLog.Information(string.Format($"After : {option} [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState} rolled: {lootItem.Rolled}"));
+            PluginLog.LogInformation(string.Format($"After : {option} [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState} rolled: {lootItem.Rolled}"));
         }
 
         private RollOption RollStateToOption(RollState rollState, string arguments)
@@ -393,17 +385,21 @@ namespace LazyLoot.Plugin
 
         private string SetFulfArguments()
         {
-            if (LazyLoot.config.EnableNeedRoll)
+            if (config.EnableNeedRoll)
             {
                 return "need";
             }
-            else if (LazyLoot.config.EnableNeedOnlyRoll)
+            else if (config.EnableNeedOnlyRoll)
             {
                 return "needonly";
             }
-            else
+            else if (config.EnableGreedRoll)
             {
                 return "greed";
+            }
+            else
+            {
+                return "pass";
             }
         }
 
@@ -412,40 +408,48 @@ namespace LazyLoot.Plugin
             switch (subArgument)
             {
                 case "need":
-                    LazyLoot.config.EnableNeedRoll = true;
-                    LazyLoot.config.EnableNeedOnlyRoll = false;
-                    LazyLoot.config.EnableGreedRoll = false;
+                    config.EnableNeedRoll = true;
+                    config.EnableNeedOnlyRoll = false;
+                    config.EnableGreedRoll = false;
+                    config.EnablePassRoll = false;
                     break;
 
                 case "needonly":
-                    LazyLoot.config.EnableNeedRoll = false;
-                    LazyLoot.config.EnableNeedOnlyRoll = true;
-                    LazyLoot.config.EnableGreedRoll = false;
+                    config.EnableNeedRoll = false;
+                    config.EnableNeedOnlyRoll = true;
+                    config.EnableGreedRoll = false;
+                    config.EnablePassRoll = false;
                     break;
 
                 case "greed":
-                    LazyLoot.config.EnableNeedRoll = false;
-                    LazyLoot.config.EnableNeedOnlyRoll = false;
-                    LazyLoot.config.EnableGreedRoll = true;
+                    config.EnableNeedRoll = false;
+                    config.EnableNeedOnlyRoll = false;
+                    config.EnableGreedRoll = true;
+                    config.EnablePassRoll = false;
+                    break;
+
+                case "pass":
+                    config.EnableNeedRoll = false;
+                    config.EnableNeedOnlyRoll = false;
+                    config.EnableGreedRoll = false;
+                    config.EnablePassRoll = true;
                     break;
             }
         }
 
         private void ToastOutput(SeString seString)
         {
-            if (LazyLoot.config.EnableToastMessage && LazyLoot.config.EnableNormalToast)
+            if (config.EnableNormalToast)
             {
-                ToastGui.ShowNormal(seString);
+                Service.Service.ToastGui.ShowNormal(seString);
             }
-
-            if (LazyLoot.config.EnableToastMessage && LazyLoot.config.EnableQuestToast)
+            else if (config.EnableQuestToast)
             {
-                ToastGui.ShowQuest(seString);
+                Service.Service.ToastGui.ShowQuest(seString);
             }
-
-            if (LazyLoot.config.EnableToastMessage && LazyLoot.config.EnableErrorToast)
+            else if (config.EnableErrorToast)
             {
-                ToastGui.ShowError(seString);
+                Service.Service.ToastGui.ShowError(seString);
             }
         }
     }

@@ -13,6 +13,7 @@ namespace LazyLoot.Config
         public bool EnableGreedRoll = false;
         public bool EnableNeedOnlyRoll = false;
         public bool EnableNeedRoll = true;
+        public bool EnablePassRoll = false;
         public bool EnableNormalToast = false;
         public bool EnableOverlay = true;
         public bool EnableQuestToast = true;
