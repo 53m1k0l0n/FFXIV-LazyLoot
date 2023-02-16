@@ -152,8 +152,8 @@ namespace LazyLoot.Plugin
                             case { IsUnique: false }:
                             // [OR] Item is unique, and isn't consumable, just check quantity. If zero means we dont have it in our inventory.
                             case { IsUnique: true, ItemAction.Row: 0 } when GetItemCount(itemInfo.ItemId) == 0:
-                            // [OR] Item has a unlock action (Minions, cards, orchestrations, mounts, etc), 2 means item has not been unlocked
-                            case { ItemAction.Row: not 0 } when GetItemUnlockedAction(itemInfo) is 2:
+                            // [OR] Item has a unlock action (Minions, cards, orchestrations, mounts, etc), 1 means item has been unlocked
+                            case { ItemAction.Row: not 0 } when GetItemUnlockedAction(itemInfo) is not 1:
                                 itemRolls.Add(index, RollStateToOption(items[index].RollState, arguments));
                                 break;
 
