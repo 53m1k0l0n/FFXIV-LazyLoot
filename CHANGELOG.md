@@ -6,7 +6,7 @@
 
 - From several rolling commands to one command with arguments. /roll need | needonly | greed | pass | passall
 - From checking the rolled status after rolling for unidue stuff and Unlockable stuff like mounts and minions to check if you have it already and roll ( Thanks to Gidedin, Midori and LWDUII in SimpleTweaks ).
-- First restrictions rules for rolling Below Item Lvl and Unlocked Items.
+- First restrictions rules for rolling Below Item Lvl and Unlocked Items. ( Thanks to Gidedin )
 
 ### Added
 
