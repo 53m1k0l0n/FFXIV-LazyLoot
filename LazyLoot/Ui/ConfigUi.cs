@@ -11,12 +11,10 @@ namespace LazyLoot.Ui
     {
         public string? rollPreview;
         internal WindowSystem windowSystem = new();
-        private readonly Plugin.LazyLoot lazyLoot;
         private string? toastPreview;
 
-        public ConfigUi(Plugin.LazyLoot lazyLoot) : base("Lazy Loot Config", ImGuiWindowFlags.AlwaysAutoResize)
+        public ConfigUi() : base("Lazy Loot Config", ImGuiWindowFlags.AlwaysAutoResize)
         {
-            this.lazyLoot = lazyLoot;
             SizeConstraints = new WindowSizeConstraints()
             {
                 MinimumSize = new Vector2(400, 200),
@@ -112,6 +110,22 @@ namespace LazyLoot.Ui
                 }
             }
 
+            ImGui.Separator();
+            ImGui.Text("User Restriction");
+            ImGui.Separator();
+            ImGui.Checkbox(" Ignore item Level below.", ref Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelow);
+            if (Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelow)
+            {
+                ImGui.SameLine();
+                ImGui.DragInt(string.Empty, ref Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue);
+
+                if (Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue < 0)
+                {
+                    Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue = 0;
+                }
+            }
+            ImGui.Checkbox("Ignore items already unlocked. ( Cards, Music, Faded copy, Minions, Mounts )", ref Plugin.LazyLoot.config.RestrictionIgnoreItemUnlocked);
+
             ImGui.Spacing();
 
             ImGui.Text("Fancy Ultimate Lazy Feature. Enable or Disable with /fulf  (Not persistent).");
@@ -175,7 +189,7 @@ namespace LazyLoot.Ui
             ImGui.SameLine();
             if (ImGui.Button("Save and Close"))
             {
-                lazyLoot.ConfigUi.IsOpen = false;
+                Plugin.LazyLoot.ConfigUi.IsOpen = false;
             }
         }
 

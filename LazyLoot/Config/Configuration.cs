@@ -21,6 +21,9 @@ namespace LazyLoot.Config
         public bool EnableToastMessage = true;
         public Vector2 OverlayOffset = new(0, 0);
         public float RollDelayInSeconds = 1;
+        public bool RestrictionIgnoreItemLevelBelow = false;
+        public bool RestrictionIgnoreItemUnlocked = false;
+        public int RestrictionIgnoreItemLevelBelowValue = 0;
 
         [JsonIgnore]
         private DalamudPluginInterface pluginInterface;

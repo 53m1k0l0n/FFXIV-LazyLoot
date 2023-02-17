@@ -1,4 +1,4 @@
-﻿namespace LazyLoot.Config
+﻿namespace LazyLoot.Util
 {
     public enum RollState : uint
     {
