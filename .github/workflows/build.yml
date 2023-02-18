@@ -53,9 +53,9 @@ jobs:
           - name: Download Build Artifact
             uses: actions/download-artifact@v3
 
-          - name: Extract release notes
+          - name: Create release notes from changelog
             id: extract-release-notes
-            uses: ffurrer2/extract-release-notes@v1
+            uses: CSchoel/release-notes-from-changelog@v1.3.0
 
           - name: Release
             uses: softprops/action-gh-release@v1
