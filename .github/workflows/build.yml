@@ -53,9 +53,9 @@ jobs:
           - name: Download Build Artifact
             uses: actions/download-artifact@v3
 
-          - name: Create release notes from changelog
+          - name: Extract release notes
             id: extract-release-notes
-            uses: CSchoel/release-notes-from-changelog@v1.3.0
+            uses: ffurrer2/extract-release-notes@v1
 
           - name: Release
             uses: softprops/action-gh-release@v1
@@ -64,9 +64,4 @@ jobs:
               body: ${{ steps.extract-release-notes.outputs.release_notes }}
               files: artifact/*
 
-          - name: Trigger Repo Update
-            uses: peter-evans/repository-dispatch@v1
-            with:
-              token: ${{ secrets.PAT }}
-              repository: ${{ github.repository_owner }}/FF14_Plugins
-              event-type: new-release
+         
