@@ -1,6 +1,6 @@
 [![](https://dcbadge.vercel.app/api/server/Db938TNdMv)](https://discord.gg/Db938TNdMv)
 
-# FFXIV-LazyLoot
+# FFXIV-LazyLoot 
 
 [Repo](https://raw.githubusercontent.com/53m1k0l0n/FF14_Plugins/main/repo.json)
 
