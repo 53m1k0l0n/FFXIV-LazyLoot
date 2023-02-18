@@ -1,6 +1,6 @@
 # Changelog
 
-## [v5.0.8] (2023-02-18)
+## [5.0.8] (2023-02-18)
 
 ### Changed
 
@@ -13,4 +13,4 @@
 - First restrictions rules for rolling Below Item Lvl and Unlocked Items. ( Thanks to Gidedin )
 
 [Unreleased]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/main...dev
-[v5.0.8]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.7...v5.0.8
+[5.0.8]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.7...v5.0.8
