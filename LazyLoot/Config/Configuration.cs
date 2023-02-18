@@ -1,7 +1,6 @@
 ﻿using Dalamud.Configuration;
 using Dalamud.Plugin;
 using Newtonsoft.Json;
-using System.Numerics;
 
 namespace LazyLoot.Config
 {
@@ -15,11 +14,9 @@ namespace LazyLoot.Config
         public bool EnableNeedRoll = true;
         public bool EnablePassRoll = false;
         public bool EnableNormalToast = false;
-        public bool EnableOverlay = true;
         public bool EnableQuestToast = true;
         public bool EnableRollDelay = true;
         public bool EnableToastMessage = true;
-        public Vector2 OverlayOffset = new(0, 0);
         public float RollDelayInSeconds = 1;
         public bool RestrictionIgnoreItemLevelBelow = false;
         public bool RestrictionIgnoreItemUnlocked = false;

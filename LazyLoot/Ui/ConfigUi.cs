@@ -32,6 +32,23 @@ namespace LazyLoot.Ui
 
         public override void Draw()
         {
+            DrawFeatures();
+            DrawRollingDelay();
+            DrawChatAndToast();
+            DrawUserRestriction();
+            DrawFulf();
+            DrawSave();
+        }
+
+        public override void OnClose()
+        {
+            Plugin.LazyLoot.config.Save();
+            Service.Service.PluginInterface.UiBuilder.AddNotification("Configuration saved", "Lazy Loot", NotificationType.Success);
+            base.OnClose();
+        }
+
+        private static void DrawFeatures()
+        {
             ImGui.Text("Features");
             ImGui.Separator();
             ImGui.Text("/roll need");
@@ -44,7 +61,7 @@ namespace LazyLoot.Ui
             ImGui.Separator();
             ImGui.Text("/roll greed");
             ImGui.SameLine();
-            ImGui.Text("Roll greed on all items or pass if greed is impossible.");
+            ImGui.Text("Roll greed for everything. If impossible, roll pass.");
             ImGui.Separator();
             ImGui.Text("/roll pass");
             ImGui.SameLine();
@@ -54,12 +71,16 @@ namespace LazyLoot.Ui
             ImGui.SameLine();
             ImGui.Text("Passes on all, even if you rolled on them previously.");
             ImGui.Separator();
+        }
 
-            ImGui.Checkbox("Rolling delay between items.", ref Plugin.LazyLoot.config.EnableRollDelay);
-
+        private static void DrawRollingDelay()
+        {
+            ImGui.Checkbox("Rolling delay between items:", ref Plugin.LazyLoot.config.EnableRollDelay);
+            ImGui.SameLine();
+            ImGui.SetNextItemWidth(100);
             if (Plugin.LazyLoot.config.EnableRollDelay)
             {
-                ImGui.DragFloat("Delay in seconds.", ref Plugin.LazyLoot.config.RollDelayInSeconds, 0.1F);
+                ImGui.DragFloat("in seconds.", ref Plugin.LazyLoot.config.RollDelayInSeconds, 0.1F);
 
                 if (Plugin.LazyLoot.config.RollDelayInSeconds < 0.1f)
                 {
@@ -68,9 +89,48 @@ namespace LazyLoot.Ui
 
                 ImGui.Separator();
             }
-            ImGui.Checkbox("Display roll information in chat.", ref Plugin.LazyLoot.config.EnableChatLogMessage);
-            ImGui.Checkbox("Display roll information as toast.", ref Plugin.LazyLoot.config.EnableToastMessage);
+        }
 
+        private static void DrawSave()
+        {
+            if (ImGui.Button("Save"))
+            {
+                Plugin.LazyLoot.config.Save();
+                Service.Service.PluginInterface.UiBuilder.AddNotification("Configuration saved", "Lazy Loot", NotificationType.Success);
+            }
+            ImGui.SameLine();
+            if (ImGui.Button("Save and Close"))
+            {
+                Plugin.LazyLoot.ConfigUi.IsOpen = false;
+            }
+        }
+
+        private static void DrawUserRestriction()
+        {
+            ImGui.Text("User Restriction");
+            ImGui.Separator();
+            ImGui.Checkbox("Ignore item Level below:", ref Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelow);
+            if (Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelow)
+            {
+                ImGui.SameLine();
+                ImGui.SetNextItemWidth(100);
+                ImGui.DragInt(string.Empty, ref Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue);
+
+                if (Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue < 0)
+                {
+                    Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue = 0;
+                }
+            }
+            ImGui.Checkbox("Ignore items already unlocked. ( Cards, Music, Faded copy, Minions, Mounts )", ref Plugin.LazyLoot.config.RestrictionIgnoreItemUnlocked);
+
+            ImGui.Spacing();
+        }
+
+        private void DrawChatAndToast()
+        {
+            ImGui.Checkbox("Display roll information in chat.", ref Plugin.LazyLoot.config.EnableChatLogMessage);
+            ImGui.Checkbox("Display roll information as toast:", ref Plugin.LazyLoot.config.EnableToastMessage);
+            ImGui.SameLine();
             if (Plugin.LazyLoot.config.EnableToastMessage)
             {
                 if (Plugin.LazyLoot.config.EnableNormalToast)
@@ -85,8 +145,8 @@ namespace LazyLoot.Ui
                 {
                     toastPreview = "Quest";
                 }
-
-                if (ImGui.BeginCombo("Toast", toastPreview))
+                ImGui.SetNextItemWidth(100);
+                if (ImGui.BeginCombo(string.Empty, toastPreview))
                 {
                     if (ImGui.Selectable("Quest", ref Plugin.LazyLoot.config.EnableQuestToast))
                     {
@@ -111,23 +171,10 @@ namespace LazyLoot.Ui
             }
 
             ImGui.Separator();
-            ImGui.Text("User Restriction");
-            ImGui.Separator();
-            ImGui.Checkbox(" Ignore item Level below.", ref Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelow);
-            if (Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelow)
-            {
-                ImGui.SameLine();
-                ImGui.DragInt(string.Empty, ref Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue);
+        }
 
-                if (Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue < 0)
-                {
-                    Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue = 0;
-                }
-            }
-            ImGui.Checkbox("Ignore items already unlocked. ( Cards, Music, Faded copy, Minions, Mounts )", ref Plugin.LazyLoot.config.RestrictionIgnoreItemUnlocked);
-
-            ImGui.Spacing();
-
+        private void DrawFulf()
+        {
             ImGui.Text("Fancy Ultimate Lazy Feature. Enable or Disable with /fulf  (Not persistent).");
             ImGui.TextColored(Plugin.LazyLoot.FulfEnabled ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed, "FULF");
             if (Plugin.LazyLoot.FulfEnabled)
@@ -181,23 +228,6 @@ namespace LazyLoot.Ui
             }
 
             ImGui.Separator();
-            if (ImGui.Button("Save"))
-            {
-                Plugin.LazyLoot.config.Save();
-                Service.Service.PluginInterface.UiBuilder.AddNotification("Configuration saved", "Lazy Loot", NotificationType.Success);
-            }
-            ImGui.SameLine();
-            if (ImGui.Button("Save and Close"))
-            {
-                Plugin.LazyLoot.ConfigUi.IsOpen = false;
-            }
-        }
-
-        public override void OnClose()
-        {
-            Plugin.LazyLoot.config.Save();
-            Service.Service.PluginInterface.UiBuilder.AddNotification("Configuration saved", "Lazy Loot", NotificationType.Success);
-            base.OnClose();
         }
     }
 }
