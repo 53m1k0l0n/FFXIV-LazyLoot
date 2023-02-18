@@ -2,6 +2,7 @@ name: Build LazyLoot
 
 env:
   plugin_name: LazyLoot
+  repo: FFXIV-LazyLoot
 
 on:
   workflow_dispatch:
