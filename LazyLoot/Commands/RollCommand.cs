@@ -64,7 +64,7 @@ namespace LazyLoot.Commands
 
             if (Plugin.LazyLoot.FulfEnabled && arguments != "passall")
             {
-                await Task.Delay(TimeSpan.FromSeconds(5));
+                await Task.Delay(TimeSpan.FromSeconds(Plugin.LazyLoot.config.FulfDelay));
             }
 
             items.AddRange(GetItems());

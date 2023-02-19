@@ -114,7 +114,7 @@ namespace LazyLoot.Ui
             {
                 ImGui.SameLine();
                 ImGui.SetNextItemWidth(100);
-                ImGui.DragInt(string.Empty, ref Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue);
+                ImGui.DragInt("ILvl", ref Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue);
 
                 if (Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue < 0)
                 {
@@ -123,7 +123,7 @@ namespace LazyLoot.Ui
             }
             ImGui.Checkbox("Ignore items already unlocked. ( Cards, Music, Faded copy, Minions, Mounts )", ref Plugin.LazyLoot.config.RestrictionIgnoreItemUnlocked);
 
-            ImGui.Spacing();
+            ImGui.Separator();
         }
 
         private void DrawChatAndToast()
@@ -225,6 +225,12 @@ namespace LazyLoot.Ui
 
                     ImGui.EndCombo();
                 }
+
+                ImGui.Spacing();
+                ImGui.Text("Delay before Fulf will roll on items. Just to be sure that all chest are open.");
+                ImGui.Text("Doesn't matter most of the time, it's more for stuff like some Normal Raids and Alli Raids.");
+                ImGui.Text("Be careful if you set it too low, Fulf wont roll on all items.");
+                ImGui.DragInt("seconds", ref Plugin.LazyLoot.config.FulfDelay);
             }
 
             ImGui.Separator();

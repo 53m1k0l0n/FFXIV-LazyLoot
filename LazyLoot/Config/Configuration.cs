@@ -21,6 +21,7 @@ namespace LazyLoot.Config
         public bool RestrictionIgnoreItemLevelBelow = false;
         public bool RestrictionIgnoreItemUnlocked = false;
         public int RestrictionIgnoreItemLevelBelowValue = 0;
+        public int FulfDelay = 5;
 
         [JsonIgnore]
         private DalamudPluginInterface pluginInterface;
