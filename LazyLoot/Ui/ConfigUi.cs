@@ -1,4 +1,4 @@
-﻿using Dalamud.Interface.Colors;
+using Dalamud.Interface.Colors;
 using Dalamud.Interface.Internal.Notifications;
 using Dalamud.Interface.Windowing;
 using ImGuiNET;
@@ -177,61 +177,64 @@ namespace LazyLoot.Ui
         {
             ImGui.Text("Fancy Ultimate Lazy Feature. Enable or Disable with /fulf  (Not persistent).");
             ImGui.TextColored(Plugin.LazyLoot.FulfEnabled ? ImGuiColors.HealerGreen : ImGuiColors.DalamudRed, "FULF");
-            if (Plugin.LazyLoot.FulfEnabled)
+
+            ImGui.Text("Options are persistent");
+
+            if (Plugin.LazyLoot.config.EnableNeedOnlyRoll)
             {
-                ImGui.Text("Options are persistent");
-
-                if (Plugin.LazyLoot.config.EnableNeedOnlyRoll)
-                {
-                    rollPreview = "Need only";
-                }
-                else if (Plugin.LazyLoot.config.EnableGreedRoll)
-                {
-                    rollPreview = "Greed";
-                }
-                else
-                {
-                    rollPreview = "Need";
-                }
-
-                if (ImGui.BeginCombo("Roll options", rollPreview))
-                {
-                    if (ImGui.Selectable("Need", ref Plugin.LazyLoot.config.EnableNeedRoll))
-                    {
-                        Plugin.LazyLoot.config.EnableNeedOnlyRoll = false;
-                        Plugin.LazyLoot.config.EnableGreedRoll = false;
-                        Plugin.LazyLoot.config.EnablePassRoll = false;
-                    }
-
-                    if (ImGui.Selectable("Need only", ref Plugin.LazyLoot.config.EnableNeedOnlyRoll))
-                    {
-                        Plugin.LazyLoot.config.EnableNeedRoll = false;
-                        Plugin.LazyLoot.config.EnableGreedRoll = false;
-                        Plugin.LazyLoot.config.EnablePassRoll = false;
-                    }
-
-                    if (ImGui.Selectable("Greed", ref Plugin.LazyLoot.config.EnableGreedRoll))
-                    {
-                        Plugin.LazyLoot.config.EnableNeedRoll = false;
-                        Plugin.LazyLoot.config.EnableNeedOnlyRoll = false;
-                        Plugin.LazyLoot.config.EnablePassRoll = false;
-                    }
-
-                    if (ImGui.Selectable("Pass", ref Plugin.LazyLoot.config.EnablePassRoll))
-                    {
-                        Plugin.LazyLoot.config.EnableNeedRoll = false;
-                        Plugin.LazyLoot.config.EnableNeedOnlyRoll = false;
-                    }
-
-                    ImGui.EndCombo();
-                }
-
-                ImGui.Spacing();
-                ImGui.Text("Delay before Fulf will roll on items. Just to be sure that all chest are open.");
-                ImGui.Text("Doesn't matter most of the time, it's more for stuff like some Normal Raids and Alli Raids.");
-                ImGui.Text("Be careful if you set it too low, Fulf wont roll on all items.");
-                ImGui.DragInt("seconds", ref Plugin.LazyLoot.config.FulfDelay);
+                rollPreview = "Need only";
             }
+            else if (Plugin.LazyLoot.config.EnableGreedRoll)
+            {
+                rollPreview = "Greed only";
+            }
+            else if (Plugin.LazyLoot.config.EnablePassRoll)
+            {
+                rollPreview = "Pass";
+            }
+            else
+            {
+                rollPreview = "Need";
+            }
+
+            if (ImGui.BeginCombo("Roll options", rollPreview))
+            {
+                if (ImGui.Selectable("Need", ref Plugin.LazyLoot.config.EnableNeedRoll))
+                {
+                    Plugin.LazyLoot.config.EnableNeedOnlyRoll = false;
+                    Plugin.LazyLoot.config.EnableGreedRoll = false;
+                    Plugin.LazyLoot.config.EnablePassRoll = false;
+                }
+
+                if (ImGui.Selectable("Need only", ref Plugin.LazyLoot.config.EnableNeedOnlyRoll))
+                {
+                    Plugin.LazyLoot.config.EnableNeedRoll = false;
+                    Plugin.LazyLoot.config.EnableGreedRoll = false;
+                    Plugin.LazyLoot.config.EnablePassRoll = false;
+                }
+
+                if (ImGui.Selectable("Greed", ref Plugin.LazyLoot.config.EnableGreedRoll))
+                {
+                    Plugin.LazyLoot.config.EnableNeedRoll = false;
+                    Plugin.LazyLoot.config.EnableNeedOnlyRoll = false;
+                    Plugin.LazyLoot.config.EnablePassRoll = false;
+                }
+
+                if (ImGui.Selectable("Pass", ref Plugin.LazyLoot.config.EnablePassRoll))
+                {
+                    Plugin.LazyLoot.config.EnableNeedRoll = false;
+                    Plugin.LazyLoot.config.EnableNeedOnlyRoll = false;
+                    Plugin.LazyLoot.config.EnableGreedRoll = false;
+                }
+
+                ImGui.EndCombo();
+            }
+
+            ImGui.Spacing();
+            ImGui.Text("Delay before Fulf will roll on items. Just to be sure that all chest are open.");
+            ImGui.Text("Doesn't matter most of the time, it's more for stuff like some Normal Raids and Alli Raids.");
+            ImGui.Text("Be careful if you set it too low, Fulf wont roll on all items.");
+            ImGui.DragInt("seconds", ref Plugin.LazyLoot.config.FulfDelay);
 
             ImGui.Separator();
         }
