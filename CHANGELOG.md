@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.0.8.2] (2023-02-19)
+
+### Added
+
+- Fix FULF Greed Only to Pass setting - Thanks Gidedin ([PR](https://github.com/53m1k0l0n/FFXIV-LazyLoot/pull/16) by [Gidedin](https://github.com/imgidedin)
+
 ## [5.0.8.1] (2023-02-19)
 
 ### Added
@@ -19,5 +25,6 @@
 - First restrictions rules for rolling Below Item Lvl and Unlocked Items. ( Thanks to Gidedin )
 
 [Unreleased]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/main...dev
+[5.0.8.2]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.8...v5.0.8.2
 [5.0.8.1]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.8...v5.0.8.1
 [5.0.8]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.7...v5.0.8
