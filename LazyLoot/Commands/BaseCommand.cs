@@ -1,10 +1,10 @@
 ﻿using Dalamud.Game.Command;
 using LazyLoot.Attributes;
+using LazyLoot.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using static Dalamud.Game.Command.CommandInfo;
 
 namespace LazyLoot.Commands
 {
@@ -21,17 +21,20 @@ namespace LazyLoot.Commands
             foreach (var methodInfo in SlashCommands)
             {
                 var attr = (CommandAttribute?)methodInfo.GetCustomAttribute(typeof(CommandAttribute));
-                if (attr == null || Delegate.CreateDelegate(typeof(HandlerDelegate), this, methodInfo, false) == null)
+                if (attr == null || Delegate.CreateDelegate(typeof(CommandInfo.HandlerDelegate), this, methodInfo, false) == null)
                     continue;
 
-                Service.Service.CommandManager.AddHandler(attr.Command, new CommandInfo((string command, string argument) => // HandlerDelegate
+                if (!Service.CommandManager.Commands.ContainsKey(attr.Command))
                 {
-                    methodInfo.Invoke(this, new string[] { command, argument });
-                })
-                {
-                    HelpMessage = attr.HelpMessage,
-                    ShowInHelp = attr.ShowInHelp,
-                });
+                    Service.CommandManager.AddHandler(attr.Command, new CommandInfo((string command, string argument) => // HandlerDelegate
+                    {
+                        methodInfo.Invoke(this, new string[] { command, argument });
+                    })
+                    {
+                        HelpMessage = attr.HelpMessage,
+                        ShowInHelp = attr.ShowInHelp,
+                    });
+                }
             }
         }
 
@@ -43,10 +46,13 @@ namespace LazyLoot.Commands
             foreach (var methodInfo in SlashCommands)
             {
                 var attr = (CommandAttribute?)methodInfo.GetCustomAttribute(typeof(CommandAttribute));
-                if (attr == null || Delegate.CreateDelegate(typeof(HandlerDelegate), this, methodInfo, false) == null)
+                if (attr == null || Delegate.CreateDelegate(typeof(CommandInfo.HandlerDelegate), this, methodInfo, false) == null)
                     continue;
 
-                Service.Service.CommandManager.RemoveHandler(attr.Command);
+                if (Service.CommandManager.Commands.ContainsKey(attr.Command))
+                {
+                    Service.CommandManager.RemoveHandler(attr.Command);
+                }
             }
         }
 

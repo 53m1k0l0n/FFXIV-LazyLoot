@@ -1,6 +1,7 @@
 ﻿using Dalamud.Data;
 using Dalamud.Game;
 using Dalamud.Game.ClientState;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.Command;
 using Dalamud.Game.Gui;
 using Dalamud.Game.Gui.Dtr;
@@ -8,7 +9,7 @@ using Dalamud.Game.Gui.Toast;
 using Dalamud.IoC;
 using Dalamud.Plugin;
 
-namespace LazyLoot.Service
+namespace LazyLoot.Services
 {
     public class Service
     {
@@ -29,5 +30,7 @@ namespace LazyLoot.Service
         [PluginService] public static SigScanner SigScanner { get; private set; } = null!;
 
         [PluginService] public static ToastGui ToastGui { get; private set; } = null!;
+
+        [PluginService] public static Condition Condition { get; private set; } = null!;
     }
 }

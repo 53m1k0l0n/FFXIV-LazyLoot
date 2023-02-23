@@ -8,6 +8,9 @@ namespace LazyLoot.Util
         [FieldOffset(0)]
         public uint ObjectId;
 
+        [FieldOffset(4)]
+        public uint IndexRelatedToObject;
+
         [FieldOffset(8)]
         public uint ItemId;
 
@@ -19,12 +22,6 @@ namespace LazyLoot.Util
 
         [FieldOffset(44)]
         public float LeftRollTime;
-
-        [FieldOffset(32)]
-        public float TotalRollTime;
-
-        [FieldOffset(60)]
-        public uint Index;
 
         public bool Rolled => RolledState > 0;
 

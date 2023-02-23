@@ -1,14 +1,13 @@
-﻿using Dalamud;
-using Dalamud.Game.Text;
+﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.Text.SeStringHandling;
 using Dalamud.Game.Text.SeStringHandling.Payloads;
-using Dalamud.Interface.Internal.Notifications;
 using Dalamud.Logging;
 using Dalamud.Utility;
 using FFXIVClientStructs.FFXIV.Client.Game;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Component.Exd;
 using LazyLoot.Attributes;
+using LazyLoot.Services;
 using LazyLoot.Util;
 using Lumina.Excel.GeneratedSheets;
 using System;
@@ -24,36 +23,19 @@ namespace LazyLoot.Commands
         internal static IntPtr lootsAddr;
         internal static RollItemRaw rollItemRaw;
         private readonly List<LootItem> items = new();
-        private readonly uint lastItem = 123456789;
-        private bool isRolling;
+        private uint lastItem = 123456789;
+        public bool isRolling;
 
         internal delegate void RollItemRaw(IntPtr lootIntPtr, RollOption option, uint lootItemIndex);
 
         public override void Initialize()
         {
-            lootsAddr = Service.Service.SigScanner.GetStaticAddressFromSig("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 89 44 24 60", 0);
-            rollItemRaw = Marshal.GetDelegateForFunctionPointer<RollItemRaw>(Service.Service.SigScanner.ScanText("41 83 F8 ?? 0F 83 ?? ?? ?? ?? 48 89 5C 24 08"));
+            lootsAddr = Service.SigScanner.GetStaticAddressFromSig("48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 89 44 24 60", 0);
+            rollItemRaw = Marshal.GetDelegateForFunctionPointer<RollItemRaw>(Service.SigScanner.ScanText("41 83 F8 ?? 0F 83 ?? ?? ?? ?? 48 89 5C 24 08"));
             base.Initialize();
         }
 
-        public void NoticeLoot(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)
-        {
-            if (isRolling) return;
-            if ((ushort)type != 2105) return;
-            if (message.TextValue == Service.Service.ClientState.ClientLanguage switch
-            {
-                ClientLanguage.German => "Bitte um das Beutegut würfeln.",
-                ClientLanguage.French => "Veuillez lancer les dés pour le butin.",
-                ClientLanguage.Japanese => "ロットを行ってください。",
-                _ => "Cast your lot."
-            })
-            {
-                Service.Service.PluginInterface.UiBuilder.AddNotification(">>New Loot<<", "Lazy Loot", NotificationType.Info);
-                Roll(string.Empty, SetFulfArguments());
-            }
-        }
-
-        [Command("/roll", "Roll for the loot according to the argument and the item's RollState. /roll need | needonly | greed | pass or passall")]
+        [Command("/rolling", "Roll for the loot according to the argument and the item's RollState. /rolling need | needonly | greed | pass or passall")]
         public async void Roll(string command, string arguments)
         {
             if (isRolling) return;
@@ -62,18 +44,16 @@ namespace LazyLoot.Commands
 
             isRolling = true;
 
-            if (Plugin.LazyLoot.FulfEnabled && arguments != "passall")
+            if (Plugin.LazyLoot.FulfEnabled)
             {
-                await Task.Delay(TimeSpan.FromSeconds(Plugin.LazyLoot.config.FulfDelay));
+                await Task.Delay(new Random().Next(1501));
             }
 
-            items.AddRange(GetItems());
-
-            if (items.All(x => x.Rolled) && arguments != "passall")
+            if (GetLastNotRolledItem().LootItem is null  && arguments != "passall")
             {
                 if (Plugin.LazyLoot.config.EnableToastMessage)
                 {
-                    Service.Service.ToastGui.ShowError(">>No new loot<<");
+                    Service.ToastGui.ShowError(">>No new loot<<");
                 }
                 isRolling = false;
                 return;
@@ -85,39 +65,41 @@ namespace LazyLoot.Commands
 
             try
             {
-                var itemRolls = new Dictionary<int, RollOption>();
-
-                for (int index = items.Count - 1; index >= 0; index--)
+                while(GetLastNotRolledItem().LootItem is not null )
                 {
-                    var itemInfo = items[index];
+                    var item = GetLastNotRolledItem();
+                    if (item.LootItem is null) break;
+                    LootItem itemInfo = (LootItem)item.LootItem;
                     if (itemInfo.ItemId is 0) continue;
-                    LogBeforeRoll(index, itemInfo);
-                    if (!items[index].Rolled || arguments == "passall")
-                    {
-                        var itemData = Service.Service.Data.GetExcelSheet<Item>()!.GetRow(itemInfo.ItemId);
+                    lastItem = itemInfo.ItemId;
+                    LogBeforeRoll(item.Index, itemInfo);
+                        var itemData = Service.Data.GetExcelSheet<Item>()!.GetRow(itemInfo.ItemId);
                         if (itemData is null) continue;
-                        PluginLog.LogInformation(string.Format($"Item Data : {itemData.Name} : Row {itemData.ItemAction.Row} : ILvl = {itemData.LevelItem.Row} : IsUnique = {itemData.IsUnique} : IsUntradable = {itemData.IsUntradable} : Unlocked = {GetItemUnlockedAction(itemInfo)}"));
-                        var rollItem = RollCheck(arguments, index, itemInfo, itemData);
-                        itemRolls.Add(rollItem.Index, rollItem.RollOption);
-                    }
-                }
+                        PluginLog.LogInformation(string.Format($"Item Data : {itemData.Name} : Row {itemData.ItemAction.Row} : ILvl = {itemData.LevelItem.Row} :  Type = {itemData.ItemAction.Value.Type} : IsUnique = {itemData.IsUnique} : IsUntradable = {itemData.IsUntradable} : Unlocked = {GetItemUnlockedAction(itemInfo)}"));
+                        var rollItem = RollCheck(arguments, item.Index, itemInfo, itemData);
 
-                // Roll items
-                foreach (KeyValuePair<int, RollOption> entry in itemRolls)
-                {
-                    await RollItemAsync(entry.Value, entry.Key);
-                    switch (entry)
-                    {
-                        case { Value: RollOption.Need }:
-                            itemsNeed++;
-                            break; ;
-                        case { Value: RollOption.Greed }:
-                            itemsGreed++;
-                            break; ;
-                        case { Value: RollOption.Pass }:
-                            itemsPass++;
-                            break; ;
-                    }
+                        if (Service.Condition[ConditionFlag.BoundByDuty])
+                        {
+
+                            await RollItemAsync(rollItem.RollOption, rollItem.Index);
+
+                                switch (rollItem)
+                                {
+                                    case { RollOption: RollOption.Need }:
+                                        itemsNeed++;
+                                        break; ;
+                                    case { RollOption: RollOption.Greed }:
+                                        itemsGreed++;
+                                        break; ;
+                                    case { RollOption: RollOption.Pass }:
+                                        itemsPass++;
+                                        break; ;
+                                }
+                        }
+                        else
+                        {
+                            break;
+                        }
                 }
 
                 ChatOutput(itemsNeed, itemsGreed, itemsPass);
@@ -128,7 +110,6 @@ namespace LazyLoot.Commands
             }
             finally
             {
-                items.Clear();
                 isRolling = false;
             }
         }
@@ -156,13 +137,29 @@ namespace LazyLoot.Commands
 
             if (Plugin.LazyLoot.config.EnableChatLogMessage)
             {
-                Service.Service.ChatGui.Print(seString);
+                Service.ChatGui.Print(seString);
             }
 
             if (Plugin.LazyLoot.config.EnableToastMessage)
             {
                 ToastOutput(seString);
             }
+        }
+
+        private (uint Index , LootItem? LootItem) GetLastNotRolledItem()
+        {
+            items.Clear();
+            items.AddRange(GetItems());
+
+            for (int index = items.Count - 1; index >= 0; index--)
+            {
+                if (!items[index].Rolled)
+                {
+                    return ((uint)index, items[index]);
+                }
+            }
+
+            return (0, null);
         }
 
         private LootItem GetItem(int index)
@@ -173,7 +170,7 @@ namespace LazyLoot.Commands
             }
             catch
             {
-                return new LootItem() { ItemId = lastItem, RolledState = RollOption.NotAvailable };
+                return new LootItem() { ItemId = lastItem, RolledState = RollOption.Rolled };
             }
         }
 
@@ -216,7 +213,7 @@ namespace LazyLoot.Commands
             return UIState.Instance()->IsItemActionUnlocked(ExdModule.GetItemRowById(itemInfo.ItemId));
         }
 
-        private void LogBeforeRoll(int index, LootItem lootItem)
+        private void LogBeforeRoll(uint index, LootItem lootItem)
         {
             PluginLog.LogInformation(string.Format($"Before : [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState} rolled: {lootItem.Rolled}"));
         }
@@ -233,43 +230,82 @@ namespace LazyLoot.Commands
             return objArray;
         }
 
-        private (int Index, RollOption RollOption) RollCheck(string arguments, int index, LootItem itemInfo, Item? itemData)
+        private (uint Index, RollOption RollOption) RollCheck(string arguments, uint index, LootItem itemInfo, Item? itemData)
         {
             switch (itemData)
             {
                 // First checking FilterRules
-                // Item is already unlocked
-                case { ItemAction.Row: >= 0 } when GetItemUnlockedAction(itemInfo) is 1 && Plugin.LazyLoot.config.RestrictionIgnoreItemUnlocked:
+                // Item is already unlocked ALL Items
+                case { ItemAction.Row: not 0 } when GetItemUnlockedAction(itemInfo) is 1 && Plugin.LazyLoot.config.RestrictionIgnoreItemUnlocked:
+                // Mounts 1332
+                case { ItemAction.Value.Type: 1322 } when GetItemUnlockedAction(itemInfo) is 1 && Plugin.LazyLoot.config.RestrictionIgnoreMounts:
+                // Minions 853
+                case { ItemAction.Value.Type: 853 } when GetItemUnlockedAction(itemInfo) is 1 && Plugin.LazyLoot.config.RestrictionIgnoreMinions:
+                // Bardings 1013
+                case { ItemAction.Value.Type: 1013 } when GetItemUnlockedAction(itemInfo) is 1 && Plugin.LazyLoot.config.RestrictionIgnoreBardings:
+                // Triple Triad Cards 3357
+                case { ItemAction.Value.Type: 3357 } when GetItemUnlockedAction(itemInfo) is 1 && Plugin.LazyLoot.config.RestrictionIgnoreTripleTriadCards:
+                // Emote/Hairstyle 2633
+                case { ItemAction.Value.Type: 2633 } when GetItemUnlockedAction(itemInfo) is 1 && Plugin.LazyLoot.config.RestrictionIgnoreEmoteHairstyle:
+                // OrchestrionRolls 25183
+                case { ItemAction.Value.Type: 25183 } when GetItemUnlockedAction(itemInfo) is 1 && Plugin.LazyLoot.config.RestrictionIgnoreOrchestrionRolls:
+                // FadedCopy 0
+                case { ItemAction.Value.Type: 0 } when GetItemUnlockedAction(itemInfo) is 1 && Plugin.LazyLoot.config.RestrictionIgnoreFadedCopy && itemData.Name.RawString.StartsWith("Faded Copy "):
                 // [OR] Item level doesnt match
                 case { EquipSlotCategory.Row: not 0 } when itemData.LevelItem.Row <= Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue && Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelow:
+                    // [OR] Can't wear it with the actual class
+                    ////case { ClassJobCategory.IsValueCreated: true } when !IsClassValid(itemData)  :
                     return (Index: index, RollOption: RollOption.Pass);
 
                 // If non of the FilterRules are active.
-                // Item is non unique
-                case { IsUnique: false }:
-                // [OR] Item is unique, and isn't consumable, just check quantity. If zero means we dont have it in our inventory.
+                // Item is unique, and isn't consumable, just check quantity. If zero means we dont have it in our inventory.
                 case { IsUnique: true, ItemAction.Row: 0 } when GetItemCount(itemInfo.ItemId) == 0:
                 // [OR] Item has a unlock action (Minions, cards, orchestrations, mounts, etc),
                 // 2 means item has not been unlocked and 4 well i don't know yet, but for now we need it, for items which are UnIque and not ItemAction.Row 0.
                 case { ItemAction.Row: not 0 } when GetItemUnlockedAction(itemInfo) is not 1:
-                    return (Index: index, RollOption: RollStateToOption(items[index].RollState, arguments));
+                // [OR] Item is non unique
+                case { IsUnique: false }:
+                    return (Index: index, RollOption: RollStateToOption(itemInfo.RollState, arguments));
 
                 default:
                     return (Index: index, RollOption: RollOption.Pass);
             }
         }
 
-        private async Task RollItemAsync(RollOption option, int index)
+        private bool IsClassValid(Item itemData)
         {
-            rollItemRaw(lootsAddr, option, (uint)index);
-
-            if (Plugin.LazyLoot.config.EnableRollDelay)
+            if (itemData.ClassJobCategory.Value.ACN && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.ACN)
             {
-                await Task.Delay(TimeSpan.FromSeconds(Plugin.LazyLoot.config.RollDelayInSeconds).Add(TimeSpan.FromMilliseconds(new Random().Next(251))));
+                return true;
             }
+            else if (itemData.ClassJobCategory.Value.ADV && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.ADV)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.ALC && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.ALC)
+            {
+                return true;
+            }
+            else 
+            { 
+                return false;
+            }
+        }
 
-            LootItem lootItem = GetItem(index);
-            PluginLog.LogInformation(string.Format($"After : {option} [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState} rolled: {lootItem.Rolled}"));
+        private async Task RollItemAsync(RollOption option, uint index)
+        {
+            PluginLog.LogInformation(string.Format("Rolling"));
+
+            rollItemRaw(lootsAddr, option, index);
+
+                if (Plugin.LazyLoot.config.EnableRollDelay)
+                {
+                    await Task.Delay(TimeSpan.FromSeconds(Plugin.LazyLoot.config.RollDelayInSeconds).Add(TimeSpan.FromMilliseconds(new Random().Next(251))));
+                }
+
+                LootItem lootItem = GetItem((int)index);
+                PluginLog.LogInformation(string.Format($"After : {option} [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState} rolled: {lootItem.Rolled}"));
+
         }
 
         private RollOption RollStateToOption(RollState rollState, string arguments)
@@ -277,12 +313,12 @@ namespace LazyLoot.Commands
             return rollState switch
             {
                 RollState.UpToNeed when arguments == "need" || arguments == "needonly" => RollOption.Need,
-                RollState.UpToGreed when arguments == "greed" || arguments == "need" => RollOption.Greed,
+                RollState.UpToGreed or RollState.UpToNeed when arguments == "greed" || arguments == "need" => RollOption.Greed,
                 _ => RollOption.Pass,
             };
         }
 
-        private string SetFulfArguments()
+        public string SetFulfArguments()
         {
             if (Plugin.LazyLoot.config.EnableNeedRoll)
             {
@@ -306,15 +342,15 @@ namespace LazyLoot.Commands
         {
             if (Plugin.LazyLoot.config.EnableNormalToast)
             {
-                Service.Service.ToastGui.ShowNormal(seString);
+                Service.ToastGui.ShowNormal(seString);
             }
             else if (Plugin.LazyLoot.config.EnableQuestToast)
             {
-                Service.Service.ToastGui.ShowQuest(seString);
+                Service.ToastGui.ShowQuest(seString);
             }
             else if (Plugin.LazyLoot.config.EnableErrorToast)
             {
-                Service.Service.ToastGui.ShowError(seString);
+                Service.ToastGui.ShowError(seString);
             }
         }
     }

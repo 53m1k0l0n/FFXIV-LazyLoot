@@ -5,6 +5,7 @@ using Dalamud.Plugin;
 using LazyLoot.Commands;
 using LazyLoot.Config;
 using LazyLoot.Ui;
+using LazyLoot.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,13 +23,13 @@ namespace LazyLoot.Plugin
 
         public LazyLoot(DalamudPluginInterface pluginInterface)
         {
-            pluginInterface.Create<Service.Service>();
+            pluginInterface.Create<Service>();
 
-            config = Service.Service.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
-            config.Initialize(Service.Service.PluginInterface);
+            config = Service.PluginInterface.GetPluginConfig() as Configuration ?? new Configuration();
+            config.Initialize(Service.PluginInterface);
             ConfigUi = new ConfigUi();
-            Service.Service.PluginInterface.UiBuilder.OpenConfigUi += delegate { ConfigUi.IsOpen = true; };
-            DtrEntry ??= Service.Service.DtrBar.Get("LazyLoot");
+            Service.PluginInterface.UiBuilder.OpenConfigUi += delegate { ConfigUi.IsOpen = true; };
+            DtrEntry ??= Service.DtrBar.Get("LazyLoot");
 
             foreach (var t in Assembly.GetExecutingAssembly().GetTypes().Where(t => t.IsSubclassOf(typeof(BaseCommand)) && !t.IsAbstract))
             {
@@ -60,7 +61,7 @@ namespace LazyLoot.Plugin
                 }
             }
 
-            Service.Service.Framework.Update += OnFrameworkUpdate;
+            Service.Framework.Update += OnFrameworkUpdate;
         }
 
         public string Name => "LazyLoot";
@@ -84,8 +85,8 @@ namespace LazyLoot.Plugin
                 command.Dispose();
             }
 
-            Service.Service.Framework.Update -= OnFrameworkUpdate;
-            Service.Service.PluginInterface.SavePluginConfig(config);
+            Service.Framework.Update -= OnFrameworkUpdate;
+            Service.PluginInterface.SavePluginConfig(config);
         }
 
         private void OnFrameworkUpdate(Framework framework)

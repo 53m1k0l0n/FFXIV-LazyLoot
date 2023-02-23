@@ -12,8 +12,8 @@ Various commands to need, greed, or pass on all loot. Chat and Toast output and 
 
 * `/lazy` : Open Lazy Loot config.
 * `/fulf` : Enable or Disable FULF (Fancy Ultimate Lazy Feature), which will roll items automatically for you, based on your settings.
-* `/roll need` : Roll need for everything. If impossible roll greed or pass if need or greed isn't successful.
-* `/roll needonly` : Roll need for everything. If impossible, roll pass.
-* `/roll greed` : Roll greed on all items or pass if greed isn't successful.
-* `/roll pass` : Pass on things you haven't rolled for yet.
-* `/roll passall` : Passes on all, even if you rolled on them previously.
+* `/rolling need` : Roll need for everything. If impossible roll greed or pass if need or greed isn't successful.
+* `/rolling needonly` : Roll need for everything. If impossible, roll pass.
+* `/rolling greed` : Roll greed on all items or pass if greed isn't successful.
+* `/rolling pass` : Pass on things you haven't rolled for yet.
+* `/rolling passall` : Passes on all, even if you rolled on them previously.

@@ -6,5 +6,6 @@
         Greed = 2,
         Pass = 5,
         NotAvailable = 7,
+        Rolled = 99,
     }
 }

@@ -1,5 +1,17 @@
 # Changelog
 
+## [5.0.9] (2023-02-23)
+
+### Added
+
+- More restrictions
+- A up to 1.5 seconds delay for FULF just to be a bit more Humanlike and no it can't be disabled.
+
+### Changed
+
+- Complete rework of the rolling for FULF
+- Changed command from /roll to /rolling because of Kapture
+
 ## [5.0.8.2] (2023-02-19)
 
 ### Added
@@ -25,6 +37,7 @@
 - First restrictions rules for rolling Below Item Lvl and Unlocked Items. ( Thanks to Gidedin )
 
 [Unreleased]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/main...dev
+[5.0.9]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.8.2..v5.0.9
 [5.0.8.2]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.8...v5.0.8.2
 [5.0.8.1]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.8...v5.0.8.1
 [5.0.8]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.7...v5.0.8

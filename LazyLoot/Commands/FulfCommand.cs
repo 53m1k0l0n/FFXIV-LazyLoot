@@ -1,5 +1,10 @@
-﻿using Dalamud.Game.Gui.Toast;
+﻿using Dalamud;
+using Dalamud.Game.Gui.Toast;
+using Dalamud.Game.Text;
+using Dalamud.Game.Text.SeStringHandling;
+using Dalamud.Interface.Internal.Notifications;
 using LazyLoot.Attributes;
+using LazyLoot.Services;
 
 namespace LazyLoot.Commands
 {
@@ -16,13 +21,13 @@ namespace LazyLoot.Commands
 
                 if (Plugin.LazyLoot.FulfEnabled)
                 {
-                    Service.Service.ToastGui.ShowQuest("FULF enabled", new QuestToastOptions() { DisplayCheckmark = true, PlaySound = true });
-                    Service.Service.ChatGui.CheckMessageHandled += NoticeLoot;
+                    Service.ToastGui.ShowQuest("FULF enabled", new QuestToastOptions() { DisplayCheckmark = true, PlaySound = true });
+                    Service.ChatGui.CheckMessageHandled += NoticeLoot;
                 }
                 else
                 {
-                    Service.Service.ToastGui.ShowQuest("FULF disabled", new QuestToastOptions() { DisplayCheckmark = true, PlaySound = true });
-                    Service.Service.ChatGui.CheckMessageHandled -= NoticeLoot;
+                    Service.ToastGui.ShowQuest("FULF disabled", new QuestToastOptions() { DisplayCheckmark = true, PlaySound = true });
+                    Service.ChatGui.CheckMessageHandled -= NoticeLoot;
                 }
             }
 
@@ -40,8 +45,25 @@ namespace LazyLoot.Commands
         {
             if (!disposing)
                 return;
-            Service.Service.ChatGui.CheckMessageHandled -= NoticeLoot;
+            Service.ChatGui.CheckMessageHandled -= NoticeLoot;
             base.Dispose(disposing);
+        }
+
+        public void NoticeLoot(XivChatType type, uint senderId, ref SeString sender, ref SeString message, ref bool isHandled)
+        {
+            if (isRolling) return;
+            if ((ushort)type != 2105) return;
+            if (message.TextValue == Service.ClientState.ClientLanguage switch
+            {
+                ClientLanguage.German => "Bitte um das Beutegut würfeln.",
+                ClientLanguage.French => "Veuillez lancer les dés pour le butin.",
+                ClientLanguage.Japanese => "ロットを行ってください。",
+                _ => "Cast your lot."
+            })
+            {
+                Service.PluginInterface.UiBuilder.AddNotification(">>New Loot<<", "Lazy Loot", NotificationType.Info);
+                Roll(string.Empty, SetFulfArguments());
+            }
         }
 
         public void SetRollOption(string subArgument)
