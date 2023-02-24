@@ -46,10 +46,10 @@ namespace LazyLoot.Commands
 
             if (Plugin.LazyLoot.FulfEnabled)
             {
-                await Task.Delay(new Random().Next(1501));
+                await Task.Delay(new Random().Next(1000,3001));
             }
 
-            if (GetLastNotRolledItem().LootItem is null  && arguments != "passall")
+            if (GetLastNotRolledItem().LootItem is null && arguments != "passall")
             {
                 if (Plugin.LazyLoot.config.EnableToastMessage)
                 {
@@ -65,7 +65,7 @@ namespace LazyLoot.Commands
 
             try
             {
-                while(GetLastNotRolledItem().LootItem is not null )
+                while (GetLastNotRolledItem().LootItem is not null)
                 {
                     var item = GetLastNotRolledItem();
                     if (item.LootItem is null) break;
@@ -73,33 +73,45 @@ namespace LazyLoot.Commands
                     if (itemInfo.ItemId is 0) continue;
                     lastItem = itemInfo.ItemId;
                     LogBeforeRoll(item.Index, itemInfo);
-                        var itemData = Service.Data.GetExcelSheet<Item>()!.GetRow(itemInfo.ItemId);
-                        if (itemData is null) continue;
-                        PluginLog.LogInformation(string.Format($"Item Data : {itemData.Name} : Row {itemData.ItemAction.Row} : ILvl = {itemData.LevelItem.Row} :  Type = {itemData.ItemAction.Value.Type} : IsUnique = {itemData.IsUnique} : IsUntradable = {itemData.IsUntradable} : Unlocked = {GetItemUnlockedAction(itemInfo)}"));
-                        var rollItem = RollCheck(arguments, item.Index, itemInfo, itemData);
+                    var itemData = Service.Data.GetExcelSheet<Item>()!.GetRow(itemInfo.ItemId);
+                    if (itemData is null) continue;
+                    PluginLog.LogInformation(string.Format($"Item Data : {itemData.Name} : Row {itemData.ItemAction.Row} : ILvl = {itemData.LevelItem.Row} :  Type = {itemData.ItemAction.Value.Type} : IsUnique = {itemData.IsUnique} : IsUntradable = {itemData.IsUntradable} : Unlocked = {GetItemUnlockedAction(itemInfo)}"));
 
-                        if (Service.Condition[ConditionFlag.BoundByDuty])
+                    ////if (IsClassValid(itemData))
+                    ////{
+                    ////    PluginLog.LogInformation("Can wear it with this Class");
+                    ////}
+                    ////else
+                    ////{
+                    ////    PluginLog.LogInformation("Can't wear it with this class");
+                    ////}
+
+                    PluginLog.Error($"{itemData.LevelEquip} : {(int)itemData.LevelEquip}");
+
+                    var rollItem = RollCheck(arguments, item.Index, itemInfo, itemData);
+
+                    if (Service.Condition[ConditionFlag.BoundByDuty])
+                    {
+
+                        await RollItemAsync(rollItem.RollOption, rollItem.Index);
+
+                        switch (rollItem)
                         {
-
-                            await RollItemAsync(rollItem.RollOption, rollItem.Index);
-
-                                switch (rollItem)
-                                {
-                                    case { RollOption: RollOption.Need }:
-                                        itemsNeed++;
-                                        break; ;
-                                    case { RollOption: RollOption.Greed }:
-                                        itemsGreed++;
-                                        break; ;
-                                    case { RollOption: RollOption.Pass }:
-                                        itemsPass++;
-                                        break; ;
-                                }
+                            case { RollOption: RollOption.Need }:
+                                itemsNeed++;
+                                break; ;
+                            case { RollOption: RollOption.Greed }:
+                                itemsGreed++;
+                                break; ;
+                            case { RollOption: RollOption.Pass }:
+                                itemsPass++;
+                                break; ;
                         }
-                        else
-                        {
-                            break;
-                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
 
                 ChatOutput(itemsNeed, itemsGreed, itemsPass);
@@ -146,7 +158,7 @@ namespace LazyLoot.Commands
             }
         }
 
-        private (uint Index , LootItem? LootItem) GetLastNotRolledItem()
+        private (uint Index, LootItem? LootItem) GetLastNotRolledItem()
         {
             items.Clear();
             items.AddRange(GetItems());
@@ -278,16 +290,120 @@ namespace LazyLoot.Commands
             {
                 return true;
             }
-            else if (itemData.ClassJobCategory.Value.ADV && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.ADV)
+            else if (itemData.ClassJobCategory.Value.ARC && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.ARC)
             {
                 return true;
             }
-            else if (itemData.ClassJobCategory.Value.ALC && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.ALC)
+            else if (itemData.ClassJobCategory.Value.AST && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.AST)
             {
                 return true;
             }
-            else 
-            { 
+            else if (itemData.ClassJobCategory.Value.BRD && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.BRD)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.BLM && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.BLM)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.BLU && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.BLU)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.CNJ && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.CNJ)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.DNC && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.DNC)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.DRK && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.DRK)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.DRG && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.DRG)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.GLA && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.GLA)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.GNB && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.GNB)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.LNC && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.LNC)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.MCH && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.MCH)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.MRD && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.MRD)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.MNK && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.MNK)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.NIN && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.NIN)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.PLD && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.PLD)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.PGL && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.PGL)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.RPR && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.RPR)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.RDM && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.RDM)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.ROG && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.ROG)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.SGE && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.SGE)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.SAM && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.SAM)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.SCH && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.SCH)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.SMN && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.SMN)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.THM && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.THM)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.WAR && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.WAR)
+            {
+                return true;
+            }
+            else if (itemData.ClassJobCategory.Value.WHM && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.WHM)
+            {
+                return true;
+            }
+            else
+            {
                 return false;
             }
         }
@@ -298,14 +414,13 @@ namespace LazyLoot.Commands
 
             rollItemRaw(lootsAddr, option, index);
 
-                if (Plugin.LazyLoot.config.EnableRollDelay)
-                {
-                    await Task.Delay(TimeSpan.FromSeconds(Plugin.LazyLoot.config.RollDelayInSeconds).Add(TimeSpan.FromMilliseconds(new Random().Next(251))));
-                }
+            if (Plugin.LazyLoot.config.EnableRollDelay)
+            {
+                await Task.Delay(TimeSpan.FromSeconds(Plugin.LazyLoot.config.RollDelayInSeconds).Add(TimeSpan.FromMilliseconds(new Random().Next(251))));
+            }
 
-                LootItem lootItem = GetItem((int)index);
-                PluginLog.LogInformation(string.Format($"After : {option} [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState} rolled: {lootItem.Rolled}"));
-
+            LootItem lootItem = GetItem((int)index);
+            PluginLog.LogInformation(string.Format($"After : {option} [{index}] {lootItem.ItemId} Id: {lootItem.ObjectId:X} rollState: {lootItem.RollState} rollOption: {lootItem.RolledState} rolled: {lootItem.Rolled}"));
         }
 
         private RollOption RollStateToOption(RollState rollState, string arguments)

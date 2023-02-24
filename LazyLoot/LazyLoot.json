@@ -3,7 +3,7 @@
   "Name": "LazyLoot",
   "Punchline": "Dungeon Loot but Lazy.",
   "Description": "Roll command with various arguments need | needonly | greed | pass | passall. \nChat and Toast output and delay for rolling.",
-  "Changelog": "- More restrictions\n- A up to 1.5 seconds delay for FULF just to be a bit more Humanlike and no it can't be disabled.\n- Complete rework of the rolling for FULF\n- Changed command from /roll to /rolling because of Kapture",
+  "Changelog": "- FULF will start roll between 1 and 3 seconds",
   "Tags": [
     "plugin",
     "loot",
