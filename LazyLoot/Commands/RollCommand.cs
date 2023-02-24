@@ -46,7 +46,7 @@ namespace LazyLoot.Commands
 
             if (Plugin.LazyLoot.FulfEnabled)
             {
-                await Task.Delay(new Random().Next(1501));
+                await Task.Delay(new Random().Next(1000, 1501));
             }
 
             if (GetLastNotRolledItem().LootItem is null  && arguments != "passall")
