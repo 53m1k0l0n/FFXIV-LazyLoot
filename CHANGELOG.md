@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.9.2] (2023-02-26)
+
+### Added
+
+- Restrictions to ignore gear which you can't use with your actual job.
+- FULF will try to roll if you activate it, in a duty, it's for the people who forget it before they run content. xD
+
+### Changed
+
+- Skip Paladin's and Gladiator Arms, roll them manual.
+
 ## [5.0.9.1] (2023-02-24)
 
 ### Changed
@@ -43,6 +54,7 @@
 - First restrictions rules for rolling Below Item Lvl and Unlocked Items. ( Thanks to Gidedin )
 
 [Unreleased]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/main...dev
+[5.0.9.2]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.9.1..v5.0.9.2
 [5.0.9.1]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.9..v5.0.9.1
 [5.0.9]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.8.2..v5.0.9
 [5.0.8.2]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.8...v5.0.8.2

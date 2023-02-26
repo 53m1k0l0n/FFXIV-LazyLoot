@@ -1,4 +1,5 @@
 ﻿using Dalamud;
+using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.Gui.Toast;
 using Dalamud.Game.Text;
 using Dalamud.Game.Text.SeStringHandling;
@@ -23,6 +24,11 @@ namespace LazyLoot.Commands
                 {
                     Service.ToastGui.ShowQuest("FULF enabled", new QuestToastOptions() { DisplayCheckmark = true, PlaySound = true });
                     Service.ChatGui.CheckMessageHandled += NoticeLoot;
+                    SetRollOption(subArguments[0]);
+                    if (Service.Condition[ConditionFlag.BoundByDuty])
+                    {
+                        Roll(string.Empty, SetFulfArguments());
+                    }
                 }
                 else
                 {
@@ -34,10 +40,6 @@ namespace LazyLoot.Commands
             if (subArguments.Length > 1)
             {
                 SetRollOption(subArguments[1]);
-            }
-            else
-            {
-                SetRollOption(subArguments[0]);
             }
         }
 

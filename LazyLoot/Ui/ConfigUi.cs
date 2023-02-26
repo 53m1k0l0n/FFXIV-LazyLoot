@@ -137,6 +137,9 @@ namespace LazyLoot.Ui
             ImGui.Checkbox("Ignore unlocked orchestrion rolls.", ref Plugin.LazyLoot.config.RestrictionIgnoreOrchestrionRolls);
             ImGui.Checkbox("Ignore unlocked Faded Copy.", ref Plugin.LazyLoot.config.RestrictionIgnoreFadedCopy);
 
+            ImGui.Separator();
+            ImGui.Checkbox("Ignore items i can't use with atcual job.", ref Plugin.LazyLoot.config.RestrictionOtherJobItems);
+
             if (Plugin.LazyLoot.config.RestrictionIgnoreMounts
                 && Plugin.LazyLoot.config.RestrictionIgnoreMinions
                 && Plugin.LazyLoot.config.RestrictionIgnoreBardings

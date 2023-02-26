@@ -44,11 +44,6 @@ namespace LazyLoot.Commands
 
             isRolling = true;
 
-            if (Plugin.LazyLoot.FulfEnabled)
-            {
-                await Task.Delay(new Random().Next(1000,3001));
-            }
-
             if (GetLastNotRolledItem().LootItem is null && arguments != "passall")
             {
                 if (Plugin.LazyLoot.config.EnableToastMessage)
@@ -57,6 +52,11 @@ namespace LazyLoot.Commands
                 }
                 isRolling = false;
                 return;
+            }
+
+            if (Plugin.LazyLoot.FulfEnabled)
+            {
+                await Task.Delay(new Random().Next(1000, 3001));
             }
 
             int itemsNeed = 0;
@@ -77,18 +77,19 @@ namespace LazyLoot.Commands
                     if (itemData is null) continue;
                     PluginLog.LogInformation(string.Format($"Item Data : {itemData.Name} : Row {itemData.ItemAction.Row} : ILvl = {itemData.LevelItem.Row} :  Type = {itemData.ItemAction.Value.Type} : IsUnique = {itemData.IsUnique} : IsUntradable = {itemData.IsUntradable} : Unlocked = {GetItemUnlockedAction(itemInfo)}"));
 
-                    ////if (IsClassValid(itemData))
-                    ////{
-                    ////    PluginLog.LogInformation("Can wear it with this Class");
-                    ////}
-                    ////else
-                    ////{
-                    ////    PluginLog.LogInformation("Can't wear it with this class");
-                    ////}
-
-                    PluginLog.Error($"{itemData.LevelEquip} : {(int)itemData.LevelEquip}");
-
                     var rollItem = RollCheck(arguments, item.Index, itemInfo, itemData);
+
+                    if (itemData.EquipSlotCategory.Row is 0
+                        && itemData.ItemAction.Value.Type is not 1322
+                        && itemData.ItemAction.Value.Type is not 853
+                        && itemData.ItemAction.Value.Type is not 1013
+                        && itemData.ItemAction.Value.Type is not 3357
+                        && itemData.ItemAction.Value.Type is not 2633
+                        && itemData.ItemAction.Value.Type is not 25183
+                        && (itemData.ItemAction.Value.Type is 0 && !itemData.Name.RawString.StartsWith("Faded Copy ")))
+                    {
+                        PluginLog.Error("Crap");
+                    }
 
                     if (Service.Condition[ConditionFlag.BoundByDuty])
                     {
@@ -165,9 +166,16 @@ namespace LazyLoot.Commands
 
             for (int index = items.Count - 1; index >= 0; index--)
             {
-                if (!items[index].Rolled)
+                var itemData = Service.Data.GetExcelSheet<Item>()!.GetRow(items[index].ItemId);
+
+                if (!items[index].Rolled && itemData.ItemAction.Value.Type != 29153)
                 {
                     return ((uint)index, items[index]);
+                }
+
+                if (itemData.ItemAction.Value.Type == 29153)
+                {
+                    Service.ToastGui.ShowError("Paladin's/Gladiator Arms detected, please roll them manual.");
                 }
             }
 
@@ -265,8 +273,8 @@ namespace LazyLoot.Commands
                 case { ItemAction.Value.Type: 0 } when GetItemUnlockedAction(itemInfo) is 1 && Plugin.LazyLoot.config.RestrictionIgnoreFadedCopy && itemData.Name.RawString.StartsWith("Faded Copy "):
                 // [OR] Item level doesnt match
                 case { EquipSlotCategory.Row: not 0 } when itemData.LevelItem.Row <= Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelowValue && Plugin.LazyLoot.config.RestrictionIgnoreItemLevelBelow:
-                    // [OR] Can't wear it with the actual class
-                    ////case { ClassJobCategory.IsValueCreated: true } when !IsClassValid(itemData)  :
+                // [OR] Items i can't use with actual job
+                case { EquipSlotCategory.Row: not 0 } when itemInfo.RollState != RollState.UpToNeed && Plugin.LazyLoot.config.RestrictionOtherJobItems:
                     return (Index: index, RollOption: RollOption.Pass);
 
                 // If non of the FilterRules are active.
@@ -281,130 +289,6 @@ namespace LazyLoot.Commands
 
                 default:
                     return (Index: index, RollOption: RollOption.Pass);
-            }
-        }
-
-        private bool IsClassValid(Item itemData)
-        {
-            if (itemData.ClassJobCategory.Value.ACN && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.ACN)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.ARC && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.ARC)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.AST && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.AST)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.BRD && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.BRD)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.BLM && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.BLM)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.BLU && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.BLU)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.CNJ && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.CNJ)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.DNC && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.DNC)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.DRK && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.DRK)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.DRG && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.DRG)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.GLA && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.GLA)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.GNB && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.GNB)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.LNC && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.LNC)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.MCH && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.MCH)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.MRD && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.MRD)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.MNK && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.MNK)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.NIN && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.NIN)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.PLD && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.PLD)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.PGL && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.PGL)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.RPR && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.RPR)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.RDM && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.RDM)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.ROG && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.ROG)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.SGE && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.SGE)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.SAM && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.SAM)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.SCH && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.SCH)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.SMN && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.SMN)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.THM && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.THM)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.WAR && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.WAR)
-            {
-                return true;
-            }
-            else if (itemData.ClassJobCategory.Value.WHM && Service.ClientState.LocalPlayer.ClassJob.GameData.ClassJobCategory.Value.WHM)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
 

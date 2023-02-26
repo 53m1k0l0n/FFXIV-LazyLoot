@@ -43,6 +43,8 @@ namespace LazyLoot.Config
         public bool RestrictionIgnoreOrchestrionRolls = false;
         // FadedCopy
         public bool RestrictionIgnoreFadedCopy = false;
+        // Items i can't use with actuall class
+        public bool RestrictionOtherJobItems = false;
 
 
         [JsonIgnore]
