@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.0.9.4] (2023-03-02)
+
+### Added
+
+- [FULF] Allows customization of initial FULF rolling delay ([PR](https://github.com/53m1k0l0n/FFXIV-LazyLoot/pull/22) by [Gidedin](https://github.com/imgidedin)).
+
 ## [5.0.9.3] (2023-03-02)
 
 ### Changed
@@ -39,7 +45,7 @@
 
 ### Added
 
-- Fix FULF Greed Only to Pass setting - Thanks Gidedin ([PR](https://github.com/53m1k0l0n/FFXIV-LazyLoot/pull/16) by [Gidedin](https://github.com/imgidedin)
+- Fix FULF Greed Only to Pass setting - Thanks Gidedin ([PR](https://github.com/53m1k0l0n/FFXIV-LazyLoot/pull/16) by [Gidedin](https://github.com/imgidedin))
 
 ## [5.0.8.1] (2023-02-19)
 
@@ -60,6 +66,7 @@
 - First restrictions rules for rolling Below Item Lvl and Unlocked Items. ( Thanks to Gidedin )
 
 [Unreleased]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/main...dev
+[5.0.9.3]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.9.3..v5.0.9.4
 [5.0.9.3]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.9.2..v5.0.9.3
 [5.0.9.2]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.9.1..v5.0.9.2
 [5.0.9.1]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.9..v5.0.9.1

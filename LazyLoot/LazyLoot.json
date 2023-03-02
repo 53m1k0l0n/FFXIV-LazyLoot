@@ -3,7 +3,7 @@
   "Name": "LazyLoot",
   "Punchline": "Dungeon Loot but Lazy.",
   "Description": "Roll command with various arguments need | needonly | greed | pass | passall. \nChat and Toast output and delay for rolling.",
-  "Changelog": "Changed\n- RollDelay can now be setup to a Min and Max value and the delay will be a random value between.",
+  "Changelog": "Added\n- [FULF] Allows customization of initial FULF rolling delay.",
   "Tags": [
     "plugin",
     "loot",

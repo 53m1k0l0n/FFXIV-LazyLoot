@@ -60,7 +60,6 @@ namespace LazyLoot.Ui
 
                 ImGui.EndTabBar();
             }
-
         }
 
         public override void OnClose()
@@ -102,15 +101,14 @@ namespace LazyLoot.Ui
                 ImGui.SetNextItemWidth(100);
                 ImGui.DragFloat("Min in seconds.", ref Plugin.LazyLoot.config.MinRollDelayInSeconds, 0.1F);
 
-
                 if (Plugin.LazyLoot.config.MinRollDelayInSeconds >= Plugin.LazyLoot.config.MaxRollDelayInSeconds)
                 {
                     Plugin.LazyLoot.config.MinRollDelayInSeconds = Plugin.LazyLoot.config.MaxRollDelayInSeconds - 0.1f;
                 }
 
-                if (Plugin.LazyLoot.config.MinRollDelayInSeconds < 0.1f)
+                if (Plugin.LazyLoot.config.MinRollDelayInSeconds < 0.5f)
                 {
-                    Plugin.LazyLoot.config.MinRollDelayInSeconds = 0.1f;
+                    Plugin.LazyLoot.config.MinRollDelayInSeconds = 0.5f;
                 }
 
                 ImGui.SetNextItemWidth(100);
@@ -119,11 +117,6 @@ namespace LazyLoot.Ui
                 if (Plugin.LazyLoot.config.MaxRollDelayInSeconds <= Plugin.LazyLoot.config.MinRollDelayInSeconds)
                 {
                     Plugin.LazyLoot.config.MaxRollDelayInSeconds = Plugin.LazyLoot.config.MinRollDelayInSeconds + 0.1f;
-                }
-
-                if (Plugin.LazyLoot.config.MaxRollDelayInSeconds < 0.1f)
-                {
-                    Plugin.LazyLoot.config.MaxRollDelayInSeconds = 0.1f;
                 }
             }
             ImGui.Separator();
@@ -299,7 +292,6 @@ namespace LazyLoot.Ui
             ImGui.SetNextItemWidth(100);
             ImGui.DragFloat("Min in seconds. ", ref Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds, 0.1F);
 
-
             if (Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds >= Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds)
             {
                 Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds = Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds - 0.1f;
@@ -317,13 +309,7 @@ namespace LazyLoot.Ui
             {
                 Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds = Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds + 0.1f;
             }
-
-            if (Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds < 0.1f)
-            {
-                Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds = 0.1f;
-            }
             ImGui.Separator();
-
         }
     }
 }
