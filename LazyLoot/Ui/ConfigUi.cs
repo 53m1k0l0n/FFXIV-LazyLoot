@@ -14,7 +14,7 @@ namespace LazyLoot.Ui
         internal WindowSystem windowSystem = new();
         private string? toastPreview;
 
-        public ConfigUi() : base("Lazy Loot Config" )
+        public ConfigUi() : base("Lazy Loot Config")
         {
             SizeConstraints = new WindowSizeConstraints()
             {
@@ -145,7 +145,7 @@ namespace LazyLoot.Ui
                 }
             }
 
-            ImGui.TextColored( ImGuiColors.DalamudRed, "Ignore items even if they are tradeable, do you want to trade them, don't ignore them.");
+            ImGui.TextColored(ImGuiColors.DalamudRed, "Ignore items even if they are tradeable, do you want to trade them, don't ignore them.");
             ImGui.Checkbox("Ignore all items already unlocked. ( Cards, Music, Faded copy, Minions, Mounts, Emotes, Hairstyle )", ref Plugin.LazyLoot.config.RestrictionIgnoreItemUnlocked);
             ImGui.Checkbox("Ignore unlocked mounts.", ref Plugin.LazyLoot.config.RestrictionIgnoreMounts);
             ImGui.Checkbox("Ignore unlocked minions.", ref Plugin.LazyLoot.config.RestrictionIgnoreMinions);
@@ -293,6 +293,26 @@ namespace LazyLoot.Ui
                 }
 
                 ImGui.EndCombo();
+            }
+
+            ImGui.Text("First Roll Delay Range (In seconds)");
+
+            ImGui.SetNextItemWidth(100);
+            ImGui.DragFloat(" ", ref Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds, 1.5f);
+
+            if (Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds < 1.5f)
+            {
+                Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds = 1.5f;
+            }
+            ImGui.SameLine();
+            ImGui.Text("to ");
+            ImGui.SameLine();
+            ImGui.SetNextItemWidth(100);
+            ImGui.DragFloat("  ", ref Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds, Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds + 1.5f);
+
+            if (Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds < Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds + 1.5f)
+            {
+                Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds = Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds + 1.5f;
             }
         }
     }

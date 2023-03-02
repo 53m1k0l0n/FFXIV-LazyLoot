@@ -56,7 +56,7 @@ namespace LazyLoot.Commands
 
             if (Plugin.LazyLoot.FulfEnabled)
             {
-                await Task.Delay(new Random().Next(1000, 3001));
+                await Task.Delay(new Random().Next((int)Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds * 1000, (int)Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds * 1000));
             }
 
             int itemsNeed = 0;
