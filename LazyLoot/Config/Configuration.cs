@@ -12,17 +12,19 @@ namespace LazyLoot.Config
         public bool EnableErrorToast = false;
         public bool EnableNormalToast = false;
         public bool EnableQuestToast = true;
-        
+
         // FulfRollOption
         public bool EnableGreedRoll = false;
         public bool EnableNeedOnlyRoll = false;
         public bool EnableNeedRoll = true;
         public bool EnablePassRoll = false;
-        
+
         // RollDelay
         public bool EnableRollDelay = true;
         public float MinRollDelayInSeconds = 0.5f;
         public float MaxRollDelayInSeconds = 1f;
+        public float FulfInitialRollDelayInSeconds = 1.5f;
+        public float FulfFinalRollDelayInSeconds = 3f;
 
         // Restrictions
         // ILvl
