@@ -102,7 +102,7 @@ namespace LazyLoot.Ui
                 ImGui.SetNextItemWidth(100);
                 ImGui.DragFloat("Min in seconds.", ref Plugin.LazyLoot.config.MinRollDelayInSeconds, 0.1F);
 
-        
+
                 if (Plugin.LazyLoot.config.MinRollDelayInSeconds >= Plugin.LazyLoot.config.MaxRollDelayInSeconds)
                 {
                     Plugin.LazyLoot.config.MinRollDelayInSeconds = Plugin.LazyLoot.config.MaxRollDelayInSeconds - 0.1f;
@@ -296,24 +296,34 @@ namespace LazyLoot.Ui
             }
 
             ImGui.Text("First Roll Delay Range (In seconds)");
+            ImGui.SetNextItemWidth(100);
+            ImGui.DragFloat("Min in seconds. ", ref Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds, 0.1F);
+
+
+            if (Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds >= Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds)
+            {
+                Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds = Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds - 0.1f;
+            }
+
+            if (Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds < 0.1f)
+            {
+                Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds = 0.1f;
+            }
 
             ImGui.SetNextItemWidth(100);
-            ImGui.DragFloat(" ", ref Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds, 1.5f);
+            ImGui.DragFloat("Max in seconds. ", ref Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds, 0.1F);
 
-            if (Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds < 1.5f)
+            if (Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds <= Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds)
             {
-                Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds = 1.5f;
+                Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds = Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds + 0.1f;
             }
-            ImGui.SameLine();
-            ImGui.Text("to ");
-            ImGui.SameLine();
-            ImGui.SetNextItemWidth(100);
-            ImGui.DragFloat("  ", ref Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds, Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds + 1.5f);
 
-            if (Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds < Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds + 1.5f)
+            if (Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds < 0.1f)
             {
-                Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds = Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds + 1.5f;
+                Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds = 0.1f;
             }
+            ImGui.Separator();
+
         }
     }
 }
