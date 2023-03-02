@@ -14,7 +14,7 @@ namespace LazyLoot.Ui
         internal WindowSystem windowSystem = new();
         private string? toastPreview;
 
-        public ConfigUi() : base("Lazy Loot Config" )
+        public ConfigUi() : base("Lazy Loot Config")
         {
             SizeConstraints = new WindowSizeConstraints()
             {
@@ -102,7 +102,7 @@ namespace LazyLoot.Ui
                 ImGui.SetNextItemWidth(100);
                 ImGui.DragFloat("Min in seconds.", ref Plugin.LazyLoot.config.MinRollDelayInSeconds, 0.1F);
 
-        
+
                 if (Plugin.LazyLoot.config.MinRollDelayInSeconds >= Plugin.LazyLoot.config.MaxRollDelayInSeconds)
                 {
                     Plugin.LazyLoot.config.MinRollDelayInSeconds = Plugin.LazyLoot.config.MaxRollDelayInSeconds - 0.1f;
@@ -145,7 +145,7 @@ namespace LazyLoot.Ui
                 }
             }
 
-            ImGui.TextColored( ImGuiColors.DalamudRed, "Ignore items even if they are tradeable, do you want to trade them, don't ignore them.");
+            ImGui.TextColored(ImGuiColors.DalamudRed, "Ignore items even if they are tradeable, do you want to trade them, don't ignore them.");
             ImGui.Checkbox("Ignore all items already unlocked. ( Cards, Music, Faded copy, Minions, Mounts, Emotes, Hairstyle )", ref Plugin.LazyLoot.config.RestrictionIgnoreItemUnlocked);
             ImGui.Checkbox("Ignore unlocked mounts.", ref Plugin.LazyLoot.config.RestrictionIgnoreMounts);
             ImGui.Checkbox("Ignore unlocked minions.", ref Plugin.LazyLoot.config.RestrictionIgnoreMinions);
@@ -294,6 +294,36 @@ namespace LazyLoot.Ui
 
                 ImGui.EndCombo();
             }
+
+            ImGui.Text("First Roll Delay Range (In seconds)");
+            ImGui.SetNextItemWidth(100);
+            ImGui.DragFloat("Min in seconds. ", ref Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds, 0.1F);
+
+
+            if (Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds >= Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds)
+            {
+                Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds = Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds - 0.1f;
+            }
+
+            if (Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds < 1.5f)
+            {
+                Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds = 1.5f;
+            }
+
+            ImGui.SetNextItemWidth(100);
+            ImGui.DragFloat("Max in seconds. ", ref Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds, 0.1F);
+
+            if (Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds <= Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds)
+            {
+                Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds = Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds + 0.1f;
+            }
+
+            if (Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds < 0.1f)
+            {
+                Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds = 0.1f;
+            }
+            ImGui.Separator();
+
         }
     }
 }
