@@ -21,7 +21,8 @@ namespace LazyLoot.Config
         
         // RollDelay
         public bool EnableRollDelay = true;
-        public float RollDelayInSeconds = 1;
+        public float MinRollDelayInSeconds = 0.5f;
+        public float MaxRollDelayInSeconds = 1f;
 
         // Restrictions
         // ILvl
@@ -51,7 +52,6 @@ namespace LazyLoot.Config
         private DalamudPluginInterface pluginInterface;
 
         public int Version { get; set; }
-        
 
         public void Initialize(DalamudPluginInterface pluginInterface) => this.pluginInterface = pluginInterface;
 

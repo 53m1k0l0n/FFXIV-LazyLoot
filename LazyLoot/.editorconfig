@@ -39,3 +39,6 @@ dotnet_diagnostic.CS8602.severity = none
 
 # CS8600: Das NULL-Literal oder ein möglicher NULL-Wert wird in einen Non-Nullable-Typ konvertiert.
 dotnet_diagnostic.CS8600.severity = none
+
+# RCS1163: Unused parameter.
+dotnet_diagnostic.RCS1163.severity = none

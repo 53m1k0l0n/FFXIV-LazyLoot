@@ -99,13 +99,31 @@ namespace LazyLoot.Ui
             ImGui.Checkbox("Rolling delay between items:", ref Plugin.LazyLoot.config.EnableRollDelay);
             if (Plugin.LazyLoot.config.EnableRollDelay)
             {
-                ImGui.SameLine();
                 ImGui.SetNextItemWidth(100);
-                ImGui.DragFloat("in seconds.", ref Plugin.LazyLoot.config.RollDelayInSeconds, 0.1F);
+                ImGui.DragFloat("Min in seconds.", ref Plugin.LazyLoot.config.MinRollDelayInSeconds, 0.1F);
 
-                if (Plugin.LazyLoot.config.RollDelayInSeconds < 0.1f)
+        
+                if (Plugin.LazyLoot.config.MinRollDelayInSeconds >= Plugin.LazyLoot.config.MaxRollDelayInSeconds)
                 {
-                    Plugin.LazyLoot.config.RollDelayInSeconds = 0.1f;
+                    Plugin.LazyLoot.config.MinRollDelayInSeconds = Plugin.LazyLoot.config.MaxRollDelayInSeconds - 0.1f;
+                }
+
+                if (Plugin.LazyLoot.config.MinRollDelayInSeconds < 0.1f)
+                {
+                    Plugin.LazyLoot.config.MinRollDelayInSeconds = 0.1f;
+                }
+
+                ImGui.SetNextItemWidth(100);
+                ImGui.DragFloat("Max in seconds.", ref Plugin.LazyLoot.config.MaxRollDelayInSeconds, 0.1F);
+
+                if (Plugin.LazyLoot.config.MaxRollDelayInSeconds <= Plugin.LazyLoot.config.MinRollDelayInSeconds)
+                {
+                    Plugin.LazyLoot.config.MaxRollDelayInSeconds = Plugin.LazyLoot.config.MinRollDelayInSeconds + 0.1f;
+                }
+
+                if (Plugin.LazyLoot.config.MaxRollDelayInSeconds < 0.1f)
+                {
+                    Plugin.LazyLoot.config.MaxRollDelayInSeconds = 0.1f;
                 }
             }
             ImGui.Separator();

@@ -93,20 +93,19 @@ namespace LazyLoot.Commands
 
                     if (Service.Condition[ConditionFlag.BoundByDuty])
                     {
-
                         await RollItemAsync(rollItem.RollOption, rollItem.Index);
 
                         switch (rollItem)
                         {
                             case { RollOption: RollOption.Need }:
                                 itemsNeed++;
-                                break; ;
+                                break;
                             case { RollOption: RollOption.Greed }:
                                 itemsGreed++;
-                                break; ;
+                                break;
                             case { RollOption: RollOption.Pass }:
                                 itemsPass++;
-                                break; ;
+                                break;
                         }
                     }
                     else
@@ -244,7 +243,7 @@ namespace LazyLoot.Commands
             T[] objArray = new T[length];
             for (int index = 0; index < length; ++index)
             {
-                IntPtr ptr = new(unmanagedArray.ToInt64() + index * num);
+                IntPtr ptr = new(unmanagedArray.ToInt64() + (index * num));
                 objArray[index] = Marshal.PtrToStructure<T>(ptr);
             }
             return objArray;
@@ -300,7 +299,7 @@ namespace LazyLoot.Commands
 
             if (Plugin.LazyLoot.config.EnableRollDelay)
             {
-                await Task.Delay(TimeSpan.FromSeconds(Plugin.LazyLoot.config.RollDelayInSeconds).Add(TimeSpan.FromMilliseconds(new Random().Next(251))));
+                await Task.Delay(TimeSpan.FromMilliseconds(new Random().Next((int)(Plugin.LazyLoot.config.MinRollDelayInSeconds * 1000), (int)(Plugin.LazyLoot.config.MaxRollDelayInSeconds * 1000) + 1)));
             }
 
             LootItem lootItem = GetItem((int)index);

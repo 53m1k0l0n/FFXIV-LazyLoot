@@ -1,5 +1,11 @@
 # Changelog
 
+## [5.0.9.3] (2023-03-02)
+
+### Changed
+
+- RollDelay can now be setup to a Min and Max value and the delay will be a random value between.
+
 ## [5.0.9.2] (2023-02-26)
 
 ### Added
@@ -54,6 +60,7 @@
 - First restrictions rules for rolling Below Item Lvl and Unlocked Items. ( Thanks to Gidedin )
 
 [Unreleased]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/main...dev
+[5.0.9.3]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.9.2..v5.0.9.3
 [5.0.9.2]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.9.1..v5.0.9.2
 [5.0.9.1]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.9..v5.0.9.1
 [5.0.9]: https://github.com/53m1k0l0n/FFXIV-LazyLoot/compare/v5.0.8.2..v5.0.9
