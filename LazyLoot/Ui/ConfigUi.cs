@@ -305,9 +305,9 @@ namespace LazyLoot.Ui
                 Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds = Plugin.LazyLoot.config.FulfFinalRollDelayInSeconds - 0.1f;
             }
 
-            if (Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds < 0.1f)
+            if (Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds < 1.5f)
             {
-                Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds = 0.1f;
+                Plugin.LazyLoot.config.FulfInitialRollDelayInSeconds = 1.5f;
             }
 
             ImGui.SetNextItemWidth(100);
